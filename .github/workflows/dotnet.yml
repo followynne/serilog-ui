@@ -17,9 +17,21 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.4.1
+    - run: npm ci
+      working-directory: src/Serilog.Ui.Web/
+      
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Build Frontend
+      run: npm run build
+      working-directory: src/Serilog.Ui.Web/
+      
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Test Frontend
+      run: npm run test
+      working-directory: src/Serilog.Ui.Web/
