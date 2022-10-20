@@ -6,7 +6,8 @@
     "build": "parcel build assets/index.html --dist-dir wwwroot/dist --public-url ./",
     "start": "parcel assets/index.html --dist-dir wwwroot/dev --https --host 127.0.0.1",
     "grunt:start": "grunt dev",
-    "grunt:build": "grunt build"
+    "grunt:build": "grunt build",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.1.11",
