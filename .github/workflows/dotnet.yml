@@ -30,8 +30,18 @@ jobs:
       run: npm run build
       working-directory: src/Serilog.Ui.Web/
       
+    # - name: Test
+    #  run: dotnet test --no-build --verbosity normal
+    # - name: Test Frontend
+    #  run: npm run test
+    #  working-directory: src/Serilog.Ui.Web/
+      
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-restore --no-build --verbosity normal
     - name: Test Frontend
       run: npm run test
       working-directory: src/Serilog.Ui.Web/
