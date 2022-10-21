@@ -8,9 +8,33 @@ on:
     branches: [ "master", "dev" ]
 
 jobs:
+  pack-core:
+    runs-on: ubuntu-latest
+    # needs: build
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Versionize
+      run: dotnet tool install -g Versionize
+    - name: i
+      run: dotnet tool install --global Versioning.NET
+    - name: rr
+      run: dotnet-version   increment-version-with-git
+    - name: Versionize
+      if: false
+      working-directory: src/Serilog.Ui.Core/
+      run: versionize
+    - name: Create a Release
+      if: false
+      uses: elgohr/Github-Release-Action@v4
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        title: MyReleaseMessage
+
   build:
 
     runs-on: ubuntu-latest
+    needs: pack-core
 
     steps:
     - uses: actions/checkout@v3
@@ -37,19 +61,3 @@ jobs:
       run: npm run test
       working-directory: src/Serilog.Ui.Web/
       
-  pack-core:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install Versionize
-      run: dotnet tool install -g Versionize
-    - name: Versionize
-      working-directory: src/Serilog.Ui.Core/
-      run: versionize
-    - name: Create a Release
-      uses: elgohr/Github-Release-Action@v4
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      with:
-        title: MyReleaseMessage
