@@ -16,7 +16,7 @@ jobs:
     - name: Install Versionize
       run: dotnet tool install -g Versionize
     - name: Versionize
-      run: versionize -w src/Serilog.Ui.Core/
+      run: versionize --working-directory src/Serilog.Ui.Web/
     - name: Create a Release
       if: false
       uses: elgohr/Github-Release-Action@v4
