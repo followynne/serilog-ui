@@ -12,7 +12,7 @@ on:
     branches: ['master', 'dev']
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +21,6 @@ jobs:
         with:
           java-version: 11
           distribution: 'zulu' # Alternative distribution options are available.
-
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
@@ -53,14 +49,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Install NPM deps
-        working-directory: src/Serilog.Ui.Web/
-        run: npm i
+  build:
+    runs-on: ubuntu-latest
 
-      - name: Restore dependencies
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: npm i
+        working-directory: src/Serilog.Ui.Web/
+        run: npm ci
+
+      - name: Restore DotNET dependencies
         run: dotnet restore
 
-      - name: Build and Analyze
+      - name: Build and Sonar Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -74,10 +78,10 @@ jobs:
 
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name: Test CSharp
+      - name: DotNET Test
         run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" || true
 
-      - name: Test UI Assets
+      - name: Assets Test
         working-directory: src/Serilog.Ui.Web/
         run: npm run test:ci
 
@@ -93,6 +97,6 @@ jobs:
         uses: dorny/test-reporter@v1.6.0
         if: always()
         with:
-          name: JEST Tests            # Name of the check run which will be created
-          path: '**/jest-*.xml'    # Path to test results
-          reporter: jest-junit        # Format of test results
+          name: Assets Tests
+          path: '**/jest-*.xml'
+          reporter: jest-junit
