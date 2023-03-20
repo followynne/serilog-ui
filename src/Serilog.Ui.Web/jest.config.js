@@ -5,5 +5,4 @@ module.exports = {
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/assets/__tests__/util/'],
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[aajt]sx?$',
-  reporters: ["default", "jest-junit"]
 };
