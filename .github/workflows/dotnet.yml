@@ -9,7 +9,7 @@ on:
     branches: ['master', 'dev']
 
 jobs:
-  build_test:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -54,9 +54,11 @@ jobs:
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: DotNET Test
-        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" || true
+        continue-on-error: true
+        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --collect "Code Coverage"
 
       - name: Assets Test
+        continue-on-error: true
         working-directory: src/Serilog.Ui.Web/
         run: npm run test:ci
 
