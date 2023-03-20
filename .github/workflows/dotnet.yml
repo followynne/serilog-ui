@@ -55,7 +55,7 @@ jobs:
 
       - name: DotNET Test
         continue-on-error: true
-        run: dotnet-coverage collect "dotnet test --no-build --logger 'trx;LogFileName=test-results.trx'" -f xml -o "coverage.xml"
+        run: dotnet-coverage collect -f xml -o "coverage.xml" dotnet test --no-build --logger 'trx;LogFileName=test-results.trx
 
       - name: Assets Test
         continue-on-error: true
