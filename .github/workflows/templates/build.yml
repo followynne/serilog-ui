@@ -1,0 +1,29 @@
+name: Build & Test serilog-ui
+
+on:
+  workflow_call:
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and Sonar Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin /k:"followynne_serilog-ui" /o:"followynne" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+
+          cd src/Serilog.Ui.Web/
+          npm run build
+          cd ../..
+          dotnet build --no-restore
+
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+      - name: DotNET Test
+        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" || true
+
+      - name: Assets Test
+        working-directory: src/Serilog.Ui.Web/
+        run: npm run test:ci

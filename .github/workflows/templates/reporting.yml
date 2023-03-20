@@ -1,0 +1,24 @@
+name: Report generation
+
+on:
+  workflow_call:
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: DotNET Tests
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: Assets Tests
+          path: '**/jest-*.xml'
+          reporter: jest-junit
