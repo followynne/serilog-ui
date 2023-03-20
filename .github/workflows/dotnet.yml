@@ -102,7 +102,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_UI }}
-
+        with:
+          args:  >
+            -Dsonar.organization=followynne
+            -Dsonar.projectKey=followynne_serilog-ui_assets
+            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
+          
       - name: Assets Tests Reporter
         uses: dorny/test-reporter@v1.6.0
         if: always()
