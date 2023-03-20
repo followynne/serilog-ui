@@ -43,6 +43,15 @@
     "netstack.js": "1.1.1",
     "popper.js": "1.16.1"
   },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "jest-junit.xml",
+    "ancestorSeparator": " › ",
+    "uniqueOutputName": "false",
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
+  },
   "msw": {
     "workerDirectory": "wwwroot"
   }
