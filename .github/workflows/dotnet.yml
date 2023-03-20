@@ -67,7 +67,7 @@ jobs:
           name: DotNET Tests
           path: '**/test-results.trx'
           reporter: dotnet-trx
-          fail-on-err: false
+          fail-on-error: false
 
       - name: Test Report
         uses: dorny/test-reporter@v1.6.0
@@ -76,4 +76,4 @@ jobs:
           name: Assets Tests
           path: '**/jest-*.xml'
           reporter: jest-junit
-          fail-on-err: false
+          fail-on-error: false
