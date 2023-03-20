@@ -69,7 +69,7 @@ jobs:
 
           cd src/Serilog.Ui.Web/
           npm run build
-          cd ..\..
+          cd ../..
           dotnet build --no-restore
 
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
