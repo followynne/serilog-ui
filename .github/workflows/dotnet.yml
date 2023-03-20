@@ -15,17 +15,65 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'zulu' # Alternative distribution options are available.
 
-  setup:
-    uses: './.github/workflows/setup-agent.yml'
-    secrets: inherit
-    needs: checkout
+      - name: Install SonarCloud scanner
+        run: |
+          mkdir .\.sonar\scanner
+          dotnet tool install dotnet-sonarscanner -g
 
-  build_test:
-    name: Build & Test
-    uses: './.github/workflows/build.yml'
-    needs: setup
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  reporting:
-    uses: './.github/workflows/reporting.yml'
-    needs: build_test
+      - name: npm i
+        working-directory: src/Serilog.Ui.Web/
+        run: npm ci
+
+      - name: Restore DotNET dependencies
+        run: dotnet restore
+
+      - name: Build and Sonar Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin /k:"followynne_serilog-ui" /o:"followynne" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+
+          cd src/Serilog.Ui.Web/
+          npm run build
+          cd ../..
+          dotnet build --no-restore
+
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+      - name: DotNET Test
+        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" || true
+
+      - name: Assets Test
+        working-directory: src/Serilog.Ui.Web/
+        run: npm run test:ci
+
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: DotNET Tests
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+          fail-on-err: false
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: Assets Tests
+          path: '**/jest-*.xml'
+          reporter: jest-junit
+          fail-on-err: false
