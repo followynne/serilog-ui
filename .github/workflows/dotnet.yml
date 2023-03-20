@@ -38,29 +38,35 @@ jobs:
 
       - name: Restore DotNET dependencies
         run: dotnet restore
-
-      - name: Build and Sonar Analysis
+        
+      - name: Start Sonar Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          dotnet sonarscanner begin /k:"followynne_serilog-ui" /o:"followynne" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        run: dotnet sonarscanner begin /k:"followynne_serilog-ui" /o:"followynne" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
+      - name: Build
+        run: |
           cd src/Serilog.Ui.Web/
           npm run build
-          cd ../..
+          
+          cd ../..  
           dotnet build --no-restore
-
-          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: DotNET Test
         continue-on-error: true
-        run: dotnet-coverage collect -f xml -o "coverage.xml" dotnet test --no-build --logger 'trx;LogFileName=test-results.trx
+        run: dotnet-coverage collect -f xml -o "coverage.xml" dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
 
       - name: Assets Test
         continue-on-error: true
         working-directory: src/Serilog.Ui.Web/
         run: npm run test:ci
+
+      - name: Stop Sonar Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Test Reporter
         uses: dorny/test-reporter@v1.6.0
