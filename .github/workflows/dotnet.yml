@@ -17,15 +17,15 @@ jobs:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
   setup:
-    uses: './.github/workflows/templates/setup-agent.yml'
+    uses: './.github/workflows/setup-agent.yml'
     secrets: inherit
     needs: checkout
 
   build_test:
     name: Build & Test
-    uses: './.github/workflows/templates/build.yml'
+    uses: './.github/workflows/build.yml'
     needs: setup
 
   reporting:
-    uses: './.github/workflows/templates/reporting.yml'
+    uses: './.github/workflows/reporting.yml'
     needs: build_test
