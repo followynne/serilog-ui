@@ -67,7 +67,9 @@ jobs:
         run: |
           dotnet sonarscanner begin /k:"followynne_serilog-ui" /o:"followynne" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
-          npm run build src/Serilog.Ui.Web/
+          cd src/Serilog.Ui.Web/
+          npm run build
+          cd ..\..
           dotnet build --no-restore
 
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
@@ -86,4 +88,11 @@ jobs:
           name: DotNET Tests
           path: '**/test-results.trx'
           reporter: dotnet-trx
-          fail-on-error: true
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: JEST Tests            # Name of the check run which will be created
+          path: '**/jest-*.xml'    # Path to test results
+          reporter: jest-junit        # Format of test results
