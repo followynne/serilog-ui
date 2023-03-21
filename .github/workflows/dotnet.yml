@@ -107,8 +107,8 @@ jobs:
           args:  >
             -Dsonar.organization=followynne
             -Dsonar.projectKey=followynne_serilog-ui_assets
-            -sonar.sources=**/src/Serilog.Ui.Web/assets/
-            -sonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
+            -Dsonar.sources=**/src/Serilog.Ui.Web/assets/
+            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
           
       - name: Assets Tests Reporter
         uses: dorny/test-reporter@v1.6.0
