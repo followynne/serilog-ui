@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  triage:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,16 +28,16 @@ jobs:
           dotnet tool install dotnet-sonarscanner -g
           dotnet tool install --global dotnet-coverage
 
-      - name: Restore npm pkgs
+      - name: "[npm] Restore"
         working-directory: src/Serilog.Ui.Web/
         run: |
           npm ci
           npm run build
 
-      - name: Restore DotNET dependencies
+      - name: "[DotNET] Restore"
         run: dotnet restore
 
-      - name: Start Sonar Analysis
+      - name: SonarCloud Scan - Start
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -47,17 +47,17 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
 
-      - name: DotNET Test
+      - name: Test
         continue-on-error: true
         run: dotnet-coverage collect -f xml -o "coverage.xml" dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
 
-      - name: Stop Sonar Analysis
+      - name: SonarCloud Scan - Stop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name: DotNET Tests Reporter
+      - name: Reporter
         uses: dorny/test-reporter@v1.6.0
         if: always()
         with:

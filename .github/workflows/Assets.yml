@@ -4,14 +4,14 @@ on:
   workflow_call:
 
 jobs:
-  triage:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Restore npm pkgs
+      - name: Restore
         working-directory: src/Serilog.Ui.Web/
         run: npm ci
 
@@ -19,7 +19,7 @@ jobs:
         working-directory: src/Serilog.Ui.Web/
         run: npm run build
 
-      - name: Assets Test
+      - name: Test
         continue-on-error: true
         working-directory: src/Serilog.Ui.Web/
         run: npm run test:ci
@@ -35,9 +35,10 @@ jobs:
             -Dsonar.projectKey=followynne_serilog-ui_assets
             -Dsonar.sources=src/Serilog.Ui.Web/assets/
             -Dsonar.tests=src/Serilog.Ui.Web/assets/__tests__/
+            -Dsonar.sonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
 
-      - name: Assets Tests Reporter
+      - name: Reporter
         uses: dorny/test-reporter@v1.6.0
         if: always()
         with:
