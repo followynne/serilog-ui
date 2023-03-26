@@ -49,7 +49,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.sources=src/ \
           /d:sonar.tests=tests/ \
-          /d:sonar.exclusions=src/Serilog.Ui.Web/assets/,src/Serilog.Ui.Web/wwwroot/,src/Serilog.Ui.Web/node_modules/,src/Serilog.Ui.Web/*.js,src/Serilog.Ui.Web/*.json  \
+          /d:sonar.exclusions=src/Serilog.Ui.Web/assets/**/*,src/Serilog.Ui.Web/wwwroot/**/*,src/Serilog.Ui.Web/node_modules/**/*,src/Serilog.Ui.Web/*.js,src/Serilog.Ui.Web/*.json  \
           /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
 
       - name: Build
