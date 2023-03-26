@@ -10,7 +10,7 @@ on:
 
 jobs:
   DotNET_Build:
-    if: ${{ false}}
+    # if: ${{ false}}
     secrets: inherit
     uses: './.github/workflows/DotNET.yml'
 
