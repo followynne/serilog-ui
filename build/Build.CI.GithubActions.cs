@@ -6,13 +6,19 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.SonarScanner;
 using System.Collections.Generic;
 
+/**
+ * Interesting ref to make the build script executable on server:
+ * https://blog.dangl.me/archive/executing-nuke-build-scripts-on-linux-machines-with-correct-file-permissions/
+ * https://stackoverflow.com/a/40979016/15129749
+ */
 [GitHubActions("DotNET-build",
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = true,
     EnableGitHubToken = true,
     ImportSecrets = new[] { nameof(DockerhubUsername), nameof(DockerhubPassword), nameof(SonarToken) },
     InvokedTargets = new[] { nameof(Backend_Reporter) },
-    OnPushBranches = new[] { "master", "dev" }
+    OnPushBranches = new[] { "master", "dev" },
+    OnPullRequestBranches = new[] { "master", "dev" }
 )]
 [GitHubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
