@@ -63,9 +63,9 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            DockerTasks.DockerLogin(new DockerLoginSettings()
-                .SetUsername(DockerhubUsername)
-                .SetPassword(DockerhubPassword));
+            //DockerTasks.DockerLogin(new DockerLoginSettings()
+            //    .SetUsername(DockerhubUsername)
+            //    .SetPassword(DockerhubPassword));
         });
 
     Target Backend_SonarScan_Start => _ => _
