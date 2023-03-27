@@ -41,8 +41,8 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Backend_Reporter'
-        run: ./build.cmd Backend_Reporter
+      - name: Run './build.cmd Backend_Test_Ci'
+        run: ./build.cmd Backend_Test_Ci
         env:
           DockerhubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           DockerhubPassword: ${{ secrets.DOCKERHUB_PASSWORD }}
