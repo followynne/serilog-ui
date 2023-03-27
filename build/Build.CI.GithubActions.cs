@@ -33,7 +33,12 @@ using System.Collections.Generic;
 )]
 partial class Build : NukeBuild
 {
-    [PathExecutable("dotnet-sonarscanner")]
+    [PackageExecutable(
+        packageId: "dotnet-sonarscanner",
+        packageExecutable: "SonarScanner.dll",
+        // Must be set for tools shipping multiple versions
+        Framework = "net7.0"
+    )]
     readonly Tool SonarScanner;
 
     [Parameter][Secret] readonly string DockerhubUsername;
@@ -44,22 +49,22 @@ partial class Build : NukeBuild
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
             !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
-    Target Backend_Setup => _ => _
-        .OnlyWhenStatic(() => OnGithubActionRun)
-        .Executes(() =>
-        {
-            DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
-                .SetPackageName("dotnet-sonarscanner")
-                .SetGlobal(true)
-            );
-            DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
-                .SetPackageName("dotnet-coverage")
-                .SetGlobal(true)
-            );
-        });
+    //Target Backend_Setup => _ => _
+    //    .OnlyWhenStatic(() => OnGithubActionRun)
+    //    .Executes(() =>
+    //    {
+    //        DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
+    //            .SetPackageName("dotnet-sonarscanner")
+    //            .SetGlobal(true)
+    //        );
+    //        DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
+    //            .SetPackageName("dotnet-coverage")
+    //            .SetGlobal(true)
+    //        );
+    //    });
 
     Target Docker_Setup => _ => _
-        .DependsOn(Backend_Setup)
+        //.DependsOn(Backend_Setup)
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
@@ -73,7 +78,7 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            SonarScanner.Invoke(@$"dotnet sonarscanner begin \
+            SonarScanner?.Invoke(@$"dotnet sonarscanner begin \
                 /k:""followynne_serilog-ui\"" \
                 /o:""followynne"" \
                 /d:sonar.login=""{SonarToken}"" \
@@ -85,13 +90,13 @@ partial class Build : NukeBuild
         });
 
     Target Backend_SonarScan_End => _ => _
-    .DependsOn(Backend_Test_Ci)
-    .OnlyWhenStatic(() => OnGithubActionRun)
-    .Executes(() =>
-    {
-        SonarScanner.Invoke($"dotnet sonarscanner end /d:sonar.login=\"{SonarToken}\"",
-            environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
-    });
+        .DependsOn(Backend_Test_Ci)
+        .OnlyWhenStatic(() => OnGithubActionRun)
+        .Executes(() =>
+        {
+            SonarScanner?.Invoke($"dotnet sonarscanner end /d:sonar.login=\"{SonarToken}\"",
+                environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
+        });
 
     Target Frontend_SonarScan => _ => _
         .DependsOn(Frontend_Tests_Ci)

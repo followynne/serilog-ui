@@ -7,7 +7,12 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build : NukeBuild
 {
-    [PathExecutable("dotnet-coverage")]
+    [PackageExecutable(
+        packageId: "dotnet-coverage",
+        packageExecutable: "DotnetCoverage.dll",
+        // Must be set for tools shipping multiple versions
+        Framework = "net7.0"
+    )]
     readonly Tool DotnetCoverage;
 
     Target Backend_Test => _ => _
@@ -25,6 +30,6 @@ partial class Build : NukeBuild
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
         .Executes(() =>
         {
-            DotnetCoverage.Invoke("dotnet-coverage collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
+            DotnetCoverage?.Invoke("dotnet-coverage collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
         });
 }
