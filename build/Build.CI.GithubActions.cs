@@ -31,13 +31,13 @@ using System.Collections.Generic;
 )]
 partial class Build : NukeBuild
 {
-    [PackageExecutable(
-        packageId: "dotnet-sonarscanner",
-        packageExecutable: "SonarScanner.MSBuild.dll",
-        // Must be set for tools shipping multiple versions
-        Framework = "net5.0"
-    )]
-    readonly Tool SonarScanner;
+    //[PackageExecutable(
+    //    packageId: "dotnet-sonarscanner",
+    //    packageExecutable: "SonarScanner.MSBuild.dll",
+    //    // Must be set for tools shipping multiple versions
+    //    Framework = "net5.0"
+    //)]
+    //readonly Tool SonarScanner;
 
     [Parameter][Secret] readonly string DockerhubUsername;
     [Parameter][Secret] readonly string DockerhubPassword;
@@ -62,6 +62,7 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
+                .SetFramework("net5.0")
                 .SetProjectKey("followynne_serilog-ui")
                 .SetOrganization("followynne")
                 .SetLogin(SonarToken)
@@ -78,13 +79,6 @@ partial class Build : NukeBuild
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
             );
-            //SonarScanner?.Invoke(@$"begin /k:""followynne_serilog-ui\"" /o:""followynne""" +
-            //    @$"/d:sonar.login=""{SonarToken}""" +
-            //    @$"/d:sonar.host.url=""https://sonarcloud.io""" +
-            //    "/d:sonar.sources=src/" +
-            //    "/d:sonar.exclusions=src/Serilog.Ui.Web/assets/**/*,src/Serilog.Ui.Web/wwwroot/**/*,src/Serilog.Ui.Web/node_modules/**/*,src/Serilog.Ui.Web/*.js,src/Serilog.Ui.Web/*.json" +
-            //    "/d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml",
-            //    environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
         });
 
     Target Backend_SonarScan_End => _ => _
@@ -93,11 +87,10 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
+                .SetFramework("net5.0")
                 .SetLogin(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
-                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
-            //SonarScanner?.Invoke($"end /d:sonar.login=\"{SonarToken}\"",
-            //    environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
+                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));            
         });
 
     Target Frontend_SonarScan => _ => _
