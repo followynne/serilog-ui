@@ -9,9 +9,7 @@ partial class Build : NukeBuild
 {
     [PackageExecutable(
         packageId: "dotnet-coverage",
-        packageExecutable: "dotnet-coverage.dll",
-        // Must be set for tools shipping multiple versions
-        Framework = "net7.0"
+        packageExecutable: "dotnet-coverage.dll"
     )]
     readonly Tool DotnetCoverage;
 
@@ -32,6 +30,6 @@ partial class Build : NukeBuild
         .Description("Runs dotnet-coverage collect, with coverlet coverage")
         .Executes(() =>
         {
-            DotnetCoverage?.Invoke("dotnet-coverage collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
+            DotnetCoverage?.Invoke("collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
         });
 }

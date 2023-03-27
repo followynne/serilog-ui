@@ -34,7 +34,7 @@ partial class Build : NukeBuild
         packageId: "dotnet-sonarscanner",
         packageExecutable: "SonarScanner.MSBuild.dll",
         // Must be set for tools shipping multiple versions
-        Framework = "net7.0"
+        Framework = "net5.0"
     )]
     readonly Tool SonarScanner;
 
@@ -60,7 +60,7 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            SonarScanner?.Invoke(@$"dotnet sonarscanner begin \
+            SonarScanner?.Invoke(@$"begin \
                 /k:""followynne_serilog-ui\"" \
                 /o:""followynne"" \
                 /d:sonar.login=""{SonarToken}"" \
@@ -76,7 +76,7 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            SonarScanner?.Invoke($"dotnet sonarscanner end /d:sonar.login=\"{SonarToken}\"",
+            SonarScanner?.Invoke($"end /d:sonar.login=\"{SonarToken}\"",
                 environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
         });
 
