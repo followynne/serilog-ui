@@ -56,7 +56,9 @@ class GithubActionSonarCloud : GitHubActionsStep
 {
     public override void Write(CustomFileWriter writer)
     {
-        writer.WriteLine("- name: SonarSource/sonarcloud-github-action@master");
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- name: SonarCloud run");
 
         using (writer.Indent())
         {
@@ -102,7 +104,9 @@ class GithubActionReporter : GitHubActionsStep
     }
     public override void Write(CustomFileWriter writer)
     {
-        writer.WriteLine("uses: dorny/test-reporter@v1.6.0");
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- uses: dorny/test-reporter@v1.6.0");
 
         using (writer.Indent())
         {
