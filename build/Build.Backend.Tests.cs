@@ -30,6 +30,6 @@ partial class Build : NukeBuild
         .Description("Runs dotnet-coverage collect, with coverlet coverage")
         .Executes(() =>
         {
-            DotnetCoverage?.Invoke(@"collect -f xml -o ""coverage.xml\"" dotnet test --logger ""trx;LogFileName=test-results.trx""");
+            DotnetCoverage?.Invoke(@"collect -f xml -o ""coverage.xml"" dotnet test --no-build --diag --logger ""trx;LogFileName=test-results.trx""");
         });
 }
