@@ -60,13 +60,13 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            SonarScanner?.Invoke(@$"begin \
-                /k:""followynne_serilog-ui\"" \
-                /o:""followynne"" \
-                /d:sonar.login=""{SonarToken}"" \
-                /d:sonar.host.url=""https://sonarcloud.io"" \  
-                /d:sonar.sources=src/ \
-                /d:sonar.exclusions=src/Serilog.Ui.Web/assets/**/*,src/Serilog.Ui.Web/wwwroot/**/*,src/Serilog.Ui.Web/node_modules/**/*,src/Serilog.Ui.Web/*.js,src/Serilog.Ui.Web/*.json \
+            SonarScanner?.Invoke(@$"begin
+                /k:""followynne_serilog-ui\""
+                /o:""followynne""
+                /d:sonar.login=""{SonarToken}""
+                /d:sonar.host.url=""https://sonarcloud.io""  
+                /d:sonar.sources=src/
+                /d:sonar.exclusions=src/Serilog.Ui.Web/assets/**/*,src/Serilog.Ui.Web/wwwroot/**/*,src/Serilog.Ui.Web/node_modules/**/*,src/Serilog.Ui.Web/*.js,src/Serilog.Ui.Web/*.json
                 /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml",
                 environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
         });
