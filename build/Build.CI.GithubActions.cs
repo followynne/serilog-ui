@@ -1,9 +1,6 @@
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
-using Nuke.Common.Tools.Docker;
-using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.SonarScanner;
 using System.Collections.Generic;
 
 /**
@@ -35,7 +32,7 @@ partial class Build : NukeBuild
 {
     [PackageExecutable(
         packageId: "dotnet-sonarscanner",
-        packageExecutable: "SonarScanner.dll",
+        packageExecutable: "SonarScanner.MSBuild.dll",
         // Must be set for tools shipping multiple versions
         Framework = "net7.0"
     )]
@@ -49,22 +46,7 @@ partial class Build : NukeBuild
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
             !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
-    //Target Backend_Setup => _ => _
-    //    .OnlyWhenStatic(() => OnGithubActionRun)
-    //    .Executes(() =>
-    //    {
-    //        DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
-    //            .SetPackageName("dotnet-sonarscanner")
-    //            .SetGlobal(true)
-    //        );
-    //        DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
-    //            .SetPackageName("dotnet-coverage")
-    //            .SetGlobal(true)
-    //        );
-    //    });
-
     Target Docker_Setup => _ => _
-        //.DependsOn(Backend_Setup)
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {

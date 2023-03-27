@@ -9,7 +9,7 @@ partial class Build : NukeBuild
 {
     [PackageExecutable(
         packageId: "dotnet-coverage",
-        packageExecutable: "DotnetCoverage.dll",
+        packageExecutable: "dotnet-coverage.dll",
         // Must be set for tools shipping multiple versions
         Framework = "net7.0"
     )]
@@ -18,6 +18,7 @@ partial class Build : NukeBuild
     Target Backend_Test => _ => _
         .DependsOn(Backend_Compile)
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
+        .Description("Runs dotnet test")
         .Executes(() =>
         {
             DotNetTest(s => s
@@ -28,6 +29,7 @@ partial class Build : NukeBuild
     Target Backend_Test_Ci => _ => _
         .DependsOn(Backend_Compile)
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
+        .Description("Runs dotnet-coverage collect, with coverlet coverage")
         .Executes(() =>
         {
             DotnetCoverage?.Invoke("dotnet-coverage collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
