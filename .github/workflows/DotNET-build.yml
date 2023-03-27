@@ -49,11 +49,11 @@ jobs:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Reporter
-        uses: dorny/test-reporter@v1.6.0
+      - uses: phoenix-actions/test-reporting@v9
         if: always()
         with:
           name: DotNET - Tests
+          output-to: step-summary
           path: '**/test-results.trx'
           reporter: dotnet-trx
           fail-on-error: false
