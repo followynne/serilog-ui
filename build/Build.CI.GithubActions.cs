@@ -3,6 +3,7 @@ using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.SonarScanner;
 using System.Collections.Generic;
+using static CustomGithubActionsAttribute;
 
 /**
  * Interesting ref to make the build script executable on server:
@@ -19,8 +20,9 @@ using System.Collections.Generic;
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
-[GitHubActions("JS-build",
+[CustomGithubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
+    AddGithubActions = new[] { GithubAction.SonarScanTask },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -90,7 +92,7 @@ partial class Build : NukeBuild
                 .SetFramework("net5.0")
                 .SetLogin(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
-                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));            
+                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
         });
 
     Target Frontend_SonarScan => _ => _

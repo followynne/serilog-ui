@@ -1,0 +1,86 @@
+﻿using Nuke.Common.CI.GitHubActions;
+using Nuke.Common.CI.GitHubActions.Configuration;
+using Nuke.Common.Execution;
+using Nuke.Common.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+// https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs
+[SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
+class CustomGithubActionsAttribute : GitHubActionsAttribute
+{
+    public CustomGithubActionsAttribute(string name, GitHubActionsImage image, params GitHubActionsImage[] images) : base(name, image, images)
+    {
+    }
+
+    public GithubAction[] AddGithubActions { get; set; } = Array.Empty<GithubAction>();
+
+    public enum GithubAction
+    {
+        SonarScanTask,
+        FrontendReporter,
+        BackendReporter
+    }
+
+    protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
+    {
+        var job = base.GetJobs(image, relevantTargets);
+        var newSteps = new List<GitHubActionsStep>(job.Steps);
+
+        foreach (var act in AddGithubActions)
+        {
+            switch (act)
+            {
+                case GithubAction.SonarScanTask:
+                    newSteps.Add(new GithubActionSonarCloud());
+                    break;
+                case GithubAction.FrontendReporter:
+                    break;
+                case GithubAction.BackendReporter:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        job.Steps = newSteps.ToArray();
+        return job;
+    }
+}
+
+[SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
+class GithubActionSonarCloud : GitHubActionsStep
+{
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine("- name: SonarSource/sonarcloud-github-action@master");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("uses: SonarSource/sonarcloud-github-action@master");
+            writer.WriteLine("env:");
+            using (writer.Indent())
+            {
+                writer.WriteLine("GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any");
+                writer.WriteLine("SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_UI }}");
+            }
+
+            writer.WriteLine("with:");
+            using (writer.Indent())
+            {
+                writer.WriteLine($"args: >");
+                using (writer.Indent())
+                {
+                    writer.WriteLine($"-Dsonar.organization=followynne");
+                    writer.WriteLine("-Dsonar.projectKey=followynne_serilog-ui_assets");
+                    writer.WriteLine("-Dsonar.sources=src/Serilog.Ui.Web/assets/");
+                    writer.WriteLine($"-Dsonar.tests=src/Serilog.Ui.Web/assets/");
+                    writer.WriteLine($"-Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*");
+                    writer.WriteLine($"-Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*");
+                    writer.WriteLine($"-Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info");
+                }
+            }
+        }
+    }
+}
