@@ -10,8 +10,9 @@ using static CustomGithubActionsAttribute;
  * https://blog.dangl.me/archive/executing-nuke-build-scripts-on-linux-machines-with-correct-file-permissions/
  * https://stackoverflow.com/a/40979016/15129749
  */
-[GitHubActions("DotNET-build",
+[CustomGithubActions("DotNET-build",
     GitHubActionsImage.UbuntuLatest,
+    AddGithubActions = new[] { GithubAction.BackendReporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -22,7 +23,7 @@ using static CustomGithubActionsAttribute;
 )]
 [CustomGithubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
-    AddGithubActions = new[] { GithubAction.SonarScanTask },
+    AddGithubActions = new[] { GithubAction.SonarScanTask, GithubAction.FrontendReporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,

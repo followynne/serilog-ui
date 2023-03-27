@@ -36,8 +36,10 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
                     newSteps.Add(new GithubActionSonarCloud());
                     break;
                 case GithubAction.FrontendReporter:
+                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/jest-*.xml'", "jest-junit"));
                     break;
                 case GithubAction.BackendReporter:
+                    newSteps.Add(new GithubActionReporter("DotNET - Tests", "'**/test-results.trx'", "dotnet-trx"));
                     break;
                 default:
                     break;
@@ -80,6 +82,39 @@ class GithubActionSonarCloud : GitHubActionsStep
                     writer.WriteLine($"-Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*");
                     writer.WriteLine($"-Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info");
                 }
+            }
+        }
+    }
+}
+
+[SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
+class GithubActionReporter : GitHubActionsStep
+{
+    readonly string name;
+    readonly string path;
+    readonly string reporter;
+
+    public GithubActionReporter(string name, string path, string reporter)
+    {
+        this.name = name;
+        this.path = path;
+        this.reporter = reporter;
+    }
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine("uses: dorny/test-reporter@v1.6.0");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("if: always()");
+
+            writer.WriteLine("with:");
+            using (writer.Indent())
+            {
+                writer.WriteLine($"name: {name}");
+                writer.WriteLine($"path: {path}");
+                writer.WriteLine($"reporter: {reporter}");
+                writer.WriteLine("fail-on-error: false");
             }
         }
     }

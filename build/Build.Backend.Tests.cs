@@ -31,6 +31,6 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             DotnetCoverage?.Invoke(
-                @"collect -f xml -o ""coverage.xml"" dotnet test --no-build --diag -l:trx;LogFileName=test-results.trx");
+                @"collect -f xml -o ""coverage.xml"" dotnet test --no-build -l:trx;LogFileName=test-results.trx");
         });
 }
