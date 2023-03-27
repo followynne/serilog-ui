@@ -25,6 +25,6 @@ partial class Build : NukeBuild
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
         .Executes(() =>
         {
-            DotnetCoverage("dotnet-coverage collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
+            DotnetCoverage.Invoke("dotnet-coverage collect -f xml -o \"coverage.xml\" dotnet test --no-build --logger \"trx;LogFileName=test-results.trx\"");
         });
 }
