@@ -62,7 +62,8 @@ jobs:
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
 
-      - uses: dorny/test-reporter@v1.6.0
+      - name: Reporter
+        uses: dorny/test-reporter@v1.6.0
         if: always()
         with:
           name: JS - Tests
