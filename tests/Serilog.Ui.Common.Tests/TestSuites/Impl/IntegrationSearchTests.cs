@@ -10,13 +10,13 @@ using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
-    public class IntegrationSearchTests<DbRunner> : IIntegrationSearchTests
+    public abstract class IntegrationSearchTests<DbRunner> : IIntegrationSearchTests
         where DbRunner : class, IIntegrationRunner
     {
         protected readonly LogModelPropsCollector logCollector;
         protected readonly IDataProvider provider;
 
-        public IntegrationSearchTests(DbRunner instance)
+        protected IntegrationSearchTests(DbRunner instance)
         {
             logCollector = instance.GetPropsCollector();
             provider = Guard.Against.Null(instance.GetDataProvider());
