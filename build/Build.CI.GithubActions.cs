@@ -15,8 +15,8 @@ using static CustomGithubActionsAttribute;
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
-    ImportSecrets = new[] { nameof(DockerhubUsername), nameof(DockerhubPassword), nameof(SonarToken) },
-    InvokedTargets = new[] { nameof(Backend_Test_Ci) },
+    ImportSecrets = new[] { nameof(SonarToken) },
+    InvokedTargets = new[] { nameof(Backend_SonarScan_End) },
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
@@ -33,8 +33,6 @@ using static CustomGithubActionsAttribute;
 )]
 partial class Build : NukeBuild
 {
-    [Parameter][Secret] readonly string DockerhubUsername;
-    [Parameter][Secret] readonly string DockerhubPassword;
     [Parameter][Secret] readonly string SonarToken;
     [Parameter][Secret] readonly string SonarTokenUi;
 
