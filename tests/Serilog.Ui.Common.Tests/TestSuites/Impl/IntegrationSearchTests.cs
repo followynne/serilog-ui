@@ -16,7 +16,7 @@ namespace MsSql.Tests.DataProvider
         protected readonly LogModelPropsCollector logCollector;
         protected readonly IDataProvider provider;
 
-        protected IntegrationSearchTests(DbRunner instance)
+        public IntegrationSearchTests(DbRunner instance)
         {
             logCollector = instance.GetPropsCollector();
             provider = Guard.Against.Null(instance.GetDataProvider());
