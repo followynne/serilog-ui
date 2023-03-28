@@ -19,9 +19,7 @@ partial class Build : NukeBuild
     [Solution] readonly Solution Solution;
     static AbsolutePath FrontendWorkingDirectory => RootDirectory / "src/Serilog.Ui.Web";
     static AbsolutePath SourceDirectory => RootDirectory / "src";
-    static AbsolutePath SourceFrontendDirectory => RootDirectory / "src/Serilog.Ui.Web/assets";
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
-    static AbsolutePath TestsFrontendDirectory => RootDirectory / "src/Serilog.Ui.Web/__tests__";
 
     Target Clean => _ => _
         .DependsOn(Backend_Clean, Frontend_Clean)
