@@ -15,7 +15,7 @@ partial class Build : NukeBuild
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-    public static int Main() => Execute<Build>(x => x.Backend_Test, p => p.Frontend_Tests);
+    public static int Main() => Execute<Build>(x => x.Publish);//(x => x.Backend_Test, p => p.Frontend_Tests);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -36,12 +36,13 @@ partial class Build : NukeBuild
         .Executes(() => { });
 
     Target Pack => _ => _
-        .DependsOn(Backend_SonarScan_End, Frontend_Tests_Ci)
-        .OnlyWhenStatic(() => IsReleaseOrMasterBranch)
+    .DependsOn(Frontend_Build, Backend_Compile)
+        //.DependsOn(Backend_SonarScan_End, Frontend_Tests_Ci)
+        //.OnlyWhenStatic(() => IsReleaseOrMasterBranch)
         .Executes(() =>
         {
             DotNetTasks.DotNetPack(new DotNetPackSettings()
-                .SetProject(Solution.GetProject("Nuke.Sample"))
+                .SetProject(Solution.GetProject("Serilog.Ui.Web"))
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
                 .EnableNoRestore()
@@ -57,8 +58,9 @@ partial class Build : NukeBuild
             {
                 DotNetTasks.DotNetNuGetPush(s => s
                     .SetTargetPath(x)
-                    .SetSource("https://api.nuget.org/v3/index.json")
-                    .SetApiKey("TODO"));
+                    .SetSource(RootDirectory / "produced-nugets"));
+                //.SetSource("https://api.nuget.org/v3/index.json")
+                //.SetApiKey("TODO"));
             });
         });
 }
