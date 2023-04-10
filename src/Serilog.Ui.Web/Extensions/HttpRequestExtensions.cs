@@ -9,7 +9,7 @@ namespace Serilog.Ui.Web
         public static bool IsLocal(this HttpRequest request)
         {
             var ipAddress = request.HttpContext.Request.Headers["X-forwarded-for"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(ipAddress))
+            if (!string.IsNullOrWhiteSpace(ipAddress))
                 return false;
 
             var connection = request.HttpContext.Connection;
