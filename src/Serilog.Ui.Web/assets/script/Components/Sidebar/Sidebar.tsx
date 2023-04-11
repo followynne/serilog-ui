@@ -12,20 +12,25 @@ import { IconMoonStars, IconSun } from '@tabler/icons-react';
 const Sidebar = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   return (
-    <Navbar width={{ sm: 150 }} p='xs' bg="blue">
+    <Navbar width={{ sm: 150 }} p='xs' bg='blue'>
       <Navbar.Section mt='xs'>
         <Group>
-          <NavLink label='LU' />
-          <ActionIcon
-            variant='default'
-            onClick={() => toggleColorScheme()}
-            size={30}>
-            {colorScheme === 'dark' ? (
-              <IconSun size='1rem' />
-            ) : (
-              <IconMoonStars size='1rem' />
-            )}
-          </ActionIcon>
+          <NavLink
+            label='LU'
+            active={false}
+            icon={
+              <ActionIcon
+                variant='default'
+                onClick={() => toggleColorScheme()}
+                size={30}>
+                {colorScheme === 'dark' ? (
+                  <IconSun size='1rem' />
+                ) : (
+                  <IconMoonStars size='1rem' />
+                )}
+              </ActionIcon>
+            }
+          />
         </Group>
       </Navbar.Section>
       <Navbar.Section grow mt='md'>

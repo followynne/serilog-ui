@@ -6,6 +6,7 @@ import {
 } from '@mantine/core';
 import { useState } from 'react';
 import Sidebar from './Sidebar/Sidebar';
+import SerilogResults from './Table/Table';
 
 const App = () => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
@@ -20,7 +21,9 @@ const App = () => {
         theme={{ colorScheme }}
         withGlobalStyles
         withNormalizeCSS>
-        <AppShell navbar={<Sidebar></Sidebar>}></AppShell>
+        <AppShell navbar={<Sidebar></Sidebar>}>
+          <SerilogResults />
+        </AppShell>
       </MantineProvider>
     </ColorSchemeProvider>
   );
