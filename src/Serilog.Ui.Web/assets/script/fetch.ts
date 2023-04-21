@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import { parseISO, isAfter } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { printPagination } from './pagination';
 import {
   cleanHtmlTags,
@@ -9,8 +9,10 @@ import {
   getBgLogLevel,
 } from './util';
 import { AuthPropertiesSingleton } from './authentication';
-import { AuthType, LogLevel, SearchResult } from '../types/types';
+import { AuthType, LogLevel, SearchForm, SearchResult } from '../types/types';
+import { setTimeout } from 'timers/promises';
 
+// TODO convert to async
 export const fetchKeys = () => {
   // TODO deduplicate auth logic into method
   const token = sessionStorage.getItem('serilogui_token');
@@ -47,67 +49,67 @@ export const fetchKeys = () => {
     });
 };
 
-export const fetchLogs = (identifiedPage?: number) => {
-  const prepareUrl = prepareSearchUrl(identifiedPage);
+export const fetchLogs = (values: SearchForm, page: number) => {
+  console.log(values, page);
+
+  const prepareUrl = prepareSearchUrl(values, page);
   if (!prepareUrl.areDatesAdmitted) return;
 
   const token = sessionStorage.getItem('serilogui_token');
   const isWindowsAuth = AuthPropertiesSingleton.authType !== AuthType.Windows;
   const headers: Headers = new Headers();
   if (isWindowsAuth) headers.set('Authorization', token);
-  fetch(prepareUrl.url, {
-    headers,
-    credentials: isWindowsAuth ? 'include' : 'same-origin',
-  })
-    .then((req) => {
-      if (req.ok) return req.json() as Promise<SearchResult>;
-      return Promise.reject({
-        status: req.status,
-        message: 'Failed to fetch.',
-      });
+  return (
+    fetch(prepareUrl.url, {
+      headers,
+      credentials: isWindowsAuth ? 'include' : 'same-origin',
     })
-    .then(onFetchLogs)
-    .catch((error) => {
-      console.warn(error);
-      if (error.status === 403) {
-        alert(
-          "You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.",
-        );
-        return;
-      }
-      alert(error.message);
-    });
+      .then((req) => {
+        if (req.ok) return req.json() as Promise<SearchResult>;
+        return Promise.reject({
+          status: req.status,
+          message: 'Failed to fetch.',
+        });
+      })
+      // .then(onFetchLogs)
+      .catch((error) => {
+        console.warn(error);
+        if (error.status === 403) {
+          alert(
+            "You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.",
+          );
+          return;
+        }
+        alert(error.message);
+      })
+  );
 };
 
-const prepareSearchUrl = (identifiedPage?: number) => {
-  const startDate =
-    document.querySelector<HTMLInputElement>('#startDate').value;
-  const endDate = document.querySelector<HTMLInputElement>('#endDate').value;
+const prepareSearchUrl = (input: SearchForm, identifiedPage?: number) => {
+  const {
+    startDate,
+    endDate,
+    table: key,
+    entriesPerPage: count,
+    level,
+    search: searchTerm,
+  } = input;
+  const page = identifiedPage ?? 1;
+
   if (startDate && endDate) {
-    const start = parseISO(startDate);
-    const end = parseISO(endDate);
-    if (isAfter(start, end)) {
+    if (isAfter(startDate, endDate)) {
       alert('Start date cannot be greater than end date');
       return { areDatesAdmitted: false, url: '' };
     }
   }
 
-  const key = document.querySelector<HTMLSelectElement>('#key').value;
-  const page =
-    identifiedPage ??
-    (document.querySelector<HTMLInputElement>('#page').value || '1');
-  const countSelect = document.querySelector<HTMLSelectElement>('#count');
-  const count = countSelect.options.item(countSelect.selectedIndex).value;
-  const levelSelect = document.querySelector<HTMLSelectElement>('#level');
-  const level = levelSelect.options.item(levelSelect.selectedIndex).value;
-  const searchTerm = escape(
-    document.querySelector<HTMLInputElement>('#search').value,
-  );
-
+  // TODO: review dates parsing
+  const startAsString = startDate?.toISOString() || '';
+  const endAsString = endDate?.toISOString() || '';
   const host = ['development', 'test'].includes(process.env.NODE_ENV)
     ? ''
     : location.pathname.replace('/index.html', '');
-  const url = `${host}/api/logs?&key=${key}&page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}`;
+  const url = `${host}/api/logs?&key=${key}&page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startAsString}&endDate=${endAsString}`;
   return { areDatesAdmitted: true, url };
 };
 

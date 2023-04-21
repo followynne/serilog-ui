@@ -2,17 +2,25 @@ import {
   ActionIcon,
   Badge,
   Group,
+  MediaQuery,
   NavLink,
   Navbar,
   UnstyledButton,
   useMantineColorScheme,
 } from '@mantine/core';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
   return (
-    <Navbar width={{ sm: 150 }} p='xs' bg='blue'>
+    <Navbar
+      hiddenBreakpoint='sm'
+      hidden={!isOpen}
+      width={{ sm: 70, md: 150, lg: 220 }}
+      p='md'
+      bg='blue'>
       <Navbar.Section mt='xs'>
         <Group>
           <NavLink
@@ -71,7 +79,9 @@ const Sidebar = () => {
       </Navbar.Section>
       <Navbar.Section>
         <Group>
-          <Badge>Serilog Ui | {new Date().getFullYear()}</Badge>
+          <MediaQuery smallerThan='md' styles={{ display: 'none' }}>
+            <Badge size='sm'>Serilog Ui | {new Date().getFullYear()}</Badge>
+          </MediaQuery>
         </Group>
       </Navbar.Section>
     </Navbar>
