@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 import { isAfter } from 'date-fns';
 import { printPagination } from './pagination';
 import {

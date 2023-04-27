@@ -1,4 +1,4 @@
-﻿import * as $ from 'jquery'
+﻿// import * as $ from 'jquery'
 import { fetchLogs } from './fetch';
 
 type PagingInfo = {

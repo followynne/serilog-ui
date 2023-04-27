@@ -1,17 +1,8 @@
-﻿import * as $ from 'jquery';
-window.jQuery = $; // global jquery for netstack
-import 'popper.js';
-import 'bootstrap';
-import netStack = require('netstack.js'); // global require for netstack
-import { initTokenUi, updateJwtToken } from './authentication';
+﻿import { initTokenUi, updateJwtToken } from './authentication';
 import { fetchKeys, fetchLogs } from './fetch';
 import { changePageByModalChoice } from './pagination';
 
 const initListenersAndDynamicInfo = () => {
-    // print current year
-    const date = new Date().getFullYear();
-    document.getElementById('currentYearPrint').append(date.toString());
-
     // enable sidebar collapse
     document.querySelectorAll(".sidebar-collapse").forEach(sl => {
         sl.addEventListener("click", () => {
