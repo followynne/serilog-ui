@@ -1,5 +1,5 @@
 import { createFormContext } from '@mantine/form';
-import { SearchForm } from '../../types/types';
+import { type SearchForm } from '../../types/types.ts';
 
 // You can give context variables any name
 export const [SearchFormProvider, useSearchFormContext, useSearchForm] =

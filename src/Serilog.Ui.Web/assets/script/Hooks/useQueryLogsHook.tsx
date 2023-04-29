@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { SearchForm } from '../../types/types';
-import { fetchLogs } from '../fetch';
+import { type SearchForm } from '../../types/types.ts';
+import { fetchLogs } from '../fetch.ts';
 
 const useQueryLogsHook = (v?: SearchForm, i?: number) =>
   useQuery({
-    queryKey: ['get-logs'], //form.values, 1],
+    queryKey: ['get-logs'], // form.values, 1],
     queryFn: () => v && i ? fetchLogs(v, i) : null,
     keepPreviousData: true,
     enabled: false,

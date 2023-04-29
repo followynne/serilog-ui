@@ -1,8 +1,8 @@
 import { Loader, Table } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
-import useQueryLogsHook from '../../Queries/QueryLogsHook';
-import { getBgLogLevel } from '../../util';
-import { LogLevel } from '../../../types/types';
+import useQueryLogsHook from '../../Hooks/useQueryLogsHook.tsx';
+import { NullGuardString, getBgLogLevel } from '../../util.ts';
+import { LogLevel } from '../../../types/types.ts';
+import DetailsModal from './DetailsModal.tsx';
 
 const SerilogResults = () => {
   const { data, isFetching } = useQueryLogsHook();
@@ -23,17 +23,21 @@ const SerilogResults = () => {
         </thead>
         <tbody>
           {!isFetching &&
-            data &&
+            NullGuardString(data) &&
             data.logs.map((log) => (
               // TODO: all styles and modals
-              <tr className={log.level}>
+              <tr key={log.rowNo} className={log.level}>
                 <td>{log.rowNo}</td>
                 <td className={getBgLogLevel(LogLevel[log.level])}>
                   {log.level}
                 </td>
                 <td>{log.timestamp}</td>
                 <td>{log.message}</td>
-                <td>{false ? log.exception : ''}</td>
+                <td>
+                  {log.exception ? (
+                    <DetailsModal modalContent={log.exception} />
+                  ) : null}
+                </td>
                 <td>{log.propertyType}</td>
                 <td>{false ? log.properties : ''}</td>
               </tr>

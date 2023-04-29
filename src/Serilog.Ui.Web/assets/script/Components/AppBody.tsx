@@ -1,7 +1,7 @@
-import { SearchForm } from '../../types/types';
-import { SearchFormProvider, useSearchForm } from '../Queries/SearchFormHook';
-import Search from './Search/Search';
-import SerilogResults from './Table/Table';
+import { type SearchForm } from '../../types/types.ts';
+import { SearchFormProvider, useSearchForm } from '../Hooks/SearchFormContext.tsx';
+import Search from './Search/Search.tsx';
+import SerilogResults from './Table/Table.tsx';
 
 const formInitialValues: SearchForm = {
   table: '',

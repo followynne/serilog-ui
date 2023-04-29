@@ -1,18 +1,18 @@
 ﻿import { parseJSON, format } from 'date-fns';
-import { LogLevel } from '../types/types';
+import { LogLevel } from '../types/types.ts';
 
 export const formatDate = (date: string) =>
   format(parseJSON(date), 'PP H:mm:ss.SSS', { weekStartsOn: 1 });
 
 export const formatXml = (xml: string, tab = '\t') => {
-  let formatted = '',
-    indent = '';
+  let formatted = '';
+  let indent = '';
   xml.split(/>\s*</).forEach(function (node) {
     // decrease indent by one "tab"
-    if (node.match(/^\/\w/)) indent = indent.substring(tab.length);
+    if (node.match(/^\/\w/) != null) indent = indent.substring(tab.length);
     formatted += indent + '<' + node + '>\r\n';
     // increase indent
-    if (node.match(/^<?\w[^>]*[^\/]$/)) indent += tab;
+    if (node.match(/^<?\w[^>]*[^/]$/) != null) indent += tab;
   });
   return formatted.substring(1, formatted.length - 3);
 };
@@ -25,7 +25,7 @@ export const fixedLengthMessageWithModal = (str: string, sliceEnd: number) => {
   const truncated = str.slice(0, sliceEnd) + '...';
   const html = `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
                     ${truncated}
-                    <span style=\"display: none\">${str}</span>
+                    <span style="display: none">${str}</span>
                   </a>`;
   return html;
 };
@@ -53,4 +53,9 @@ export const getBgLogLevel = (logLevel: LogLevel) => {
     default:
       return 'bg-secondary';
   }
+};
+
+export const NullGuardString = (value: string) => {
+  // https://stackoverflow.com/a/64940749/15129749
+  return (value ?? '') !== '';
 };

@@ -1,23 +1,15 @@
-﻿import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+﻿import type userEvent from '@testing-library/user-event';
 
 export {};
 
 declare global {
-  export interface JQuery {
-    netStack: ({ prettyprint }: { prettyprint: boolean }) => void;
-  }
   export interface Window {
-    $: JQueryStatic;
-    jQuery: JQueryStatic;
     config: {
       authType?: string;
       routePrefix?: string;
       homeUrl?: string;
     };
-    userEventLibApi: UserEvent;
-  }
-  export interface globalThis {
-    $: JQueryStatic;
+    userEventLibApi: typeof userEvent;
   }
 }
 
@@ -40,17 +32,17 @@ export enum LogType {
   Xml = 'xml',
 }
 
-export type SeriLogObject = {
+export interface SeriLogObject {
   rowNo: number;
   level: LogLevel;
   message: string;
   timestamp: string;
-  exception?: { [index: string]: string };
-  properties?: { [index: string]: string };
+  exception?: Record<string, string>;
+  properties?: Record<string, string>;
   propertyType: LogType;
-};
+}
 
-export type EncodedSeriLogObject = {
+export interface EncodedSeriLogObject {
   rowNo: number;
   level: string;
   message: string;
@@ -58,14 +50,14 @@ export type EncodedSeriLogObject = {
   exception?: string;
   properties?: string;
   propertyType: string;
-};
+}
 
-export type SearchResult = {
+export interface SearchResult {
   logs: EncodedSeriLogObject[];
   total: number;
   count: number;
   currentPage: number;
-};
+}
 
 export enum SearchParameters {
   Count = 'count',
@@ -77,11 +69,11 @@ export enum SearchParameters {
   SortDirection = 'sort', // wip
 }
 
-export type SearchForm = {
+export interface SearchForm {
   table: string;
   entriesPerPage: number;
-  level?: LogLevel;
+  level: LogLevel | null;
   startDate: Date | null;
   endDate: Date | null;
   search: string;
-};
+}

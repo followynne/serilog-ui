@@ -8,46 +8,8 @@ import {
   formatXml,
   getBgLogLevel,
 } from './util';
-import { AuthPropertiesSingleton } from './authentication';
 import { AuthType, LogLevel, SearchForm, SearchResult } from '../types/types';
-import { setTimeout } from 'timers/promises';
-
-// TODO convert to async
-export const fetchKeys = () => {
-  // TODO deduplicate auth logic into method
-  const token = sessionStorage.getItem('serilogui_token');
-  const isWindowsAuth = AuthPropertiesSingleton.authType !== AuthType.Windows;
-  const headers: Headers = new Headers();
-  if (isWindowsAuth) headers.set('Authorization', token);
-
-  const host = ['development', 'test'].includes(process.env.NODE_ENV)
-    ? ''
-    : location.pathname.replace('/index.html', '');
-  const url = `${host}/api/keys`;
-
-  return fetch(url, {
-    headers,
-    credentials: isWindowsAuth ? 'include' : 'same-origin',
-  })
-    .then((req) => {
-      if (req.ok) return req.json() as Promise<string[]>;
-      return Promise.reject({
-        status: req.status,
-        message: 'Failed to fetch.',
-      });
-    })
-    .catch((error) => {
-      console.warn(error);
-      if (error.status === 403) {
-        alert(
-          "You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.",
-        );
-        return [] as string[];
-      }
-      alert(error.message);
-      return [] as string[];
-    });
-};
+import { AuthPropertiesSingleton } from './Authorization/AuthProperties';
 
 export const fetchLogs = (values: SearchForm, page: number) => {
   console.log(values, page);
