@@ -55,7 +55,5 @@ export const getBgLogLevel = (logLevel: LogLevel) => {
   }
 };
 
-export const NullGuardString = (value: string) => {
-  // https://stackoverflow.com/a/64940749/15129749
-  return (value ?? '') !== '';
-};
+// https://stackoverflow.com/a/64940749/15129749
+export const IsStringNullOrEmptyGuard = (value: string) => (value ?? '') === '';

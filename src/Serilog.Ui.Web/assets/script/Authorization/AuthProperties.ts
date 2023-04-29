@@ -1,16 +1,19 @@
+import { immerable } from 'immer';
 import { AuthType } from '../../types/types.ts';
 
 export class AuthProperties {
+  public [immerable] = true;
+
   authType?: AuthType;
   routePrefix?: string;
-  private readonly _bearerToken: string | null;
+  private _bearerToken: string | null;
 
   public get bearerToken() {
-    return this._bearerToken ?? '' // sessionStorage.getItem('serilogui_token') ?? '';
+    return this._bearerToken ?? ''; // sessionStorage.getItem('serilogui_token') ?? '';
   }
 
   public set bearerToken(bearerToken: string) {
-    this.bearerToken = bearerToken;
+    this._bearerToken = bearerToken;
 
     // sessionStorage.setItem('serilogui_token', bearerToken);
   }

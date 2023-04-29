@@ -1,6 +1,6 @@
 import { Loader, Table } from '@mantine/core';
 import useQueryLogsHook from '../../Hooks/useQueryLogsHook.tsx';
-import { NullGuardString, getBgLogLevel } from '../../util.ts';
+import { IsStringNullOrEmptyGuard, getBgLogLevel } from '../../util.ts';
 import { LogLevel } from '../../../types/types.ts';
 import DetailsModal from './DetailsModal.tsx';
 
@@ -23,7 +23,7 @@ const SerilogResults = () => {
         </thead>
         <tbody>
           {!isFetching &&
-            NullGuardString(data) &&
+            !IsStringNullOrEmptyGuard(data) &&
             data.logs.map((log) => (
               // TODO: all styles and modals
               <tr key={log.rowNo} className={log.level}>

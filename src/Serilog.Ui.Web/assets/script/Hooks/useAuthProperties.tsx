@@ -17,12 +17,15 @@ export const AuthPropertiesProvider = ({
 }: {
   children: ReactNode | undefined;
 }) => {
-  const [authProps, setAuthProps] = useImmer(new AuthProperties());
+  const baseProps = new AuthProperties();
+  const [authProps, setAuthProps] = useImmer(baseProps);
 
   const setToken = (bearerToken: string) => {
-    authProps.bearerToken = bearerToken;
+    // authProps.bearerToken = bearerToken;
 
-    setAuthProps(authProps);
+    setAuthProps((draft) => {
+      draft.bearerToken = bearerToken;
+    });
   };
 
   return (

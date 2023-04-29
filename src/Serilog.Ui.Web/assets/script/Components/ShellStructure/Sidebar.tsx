@@ -6,12 +6,14 @@ import {
   NavLink,
   Navbar,
   useMantineColorScheme,
+  useMantineTheme,
 } from '@mantine/core';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import AuthorizeButton from '../Authorization/AuthorizeButton.tsx';
 
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
 
   return (
     <Navbar
@@ -20,7 +22,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
       hidden={!isOpen}
       width={{ sm: 70, md: 150, lg: 220 }}
       p="md"
-      bg="blue"
+      bg={colorScheme === 'dark' ? theme.colors.blue[7] : theme.colors.blue[4]}
     >
       <Navbar.Section mt="xs">
         <Group position="center" spacing="xs">
