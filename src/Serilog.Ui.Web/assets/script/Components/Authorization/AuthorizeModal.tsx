@@ -24,6 +24,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         withAsterisk
         autoComplete="off"
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          authProps.validateToken(event.currentTarget.value);
           setToken(event.currentTarget.value);
         }}
       />
