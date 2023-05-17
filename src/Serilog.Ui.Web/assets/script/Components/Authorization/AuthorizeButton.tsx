@@ -1,9 +1,9 @@
 import { Button, Modal } from '@mantine/core';
-import { useAuthProperties } from '../../Hooks/useAuthProperties.tsx';
+import { useAuthProperties } from '../../Hooks/useAuthProperties';
 import { useDisclosure } from '@mantine/hooks';
-import AuthorizeModal from './AuthorizeModal.tsx';
+import AuthorizeModal from './AuthorizeModal';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
-import { IsStringNullOrEmptyGuard } from '../../util.ts';
+import { IsStringNullOrEmptyGuard } from '../../util';
 
 const AuthorizeButton = () => {
   const { authProps } = useAuthProperties();

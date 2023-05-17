@@ -6,11 +6,11 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchFormContext } from '../../Hooks/SearchFormContext.tsx';
-import useQueryLogsHook from '../../Hooks/useQueryLogsHook.tsx';
+import { useSearchFormContext } from '../../Hooks/SearchFormContext';
+import useQueryLogsHook from '../../Hooks/useQueryLogsHook';
 import { useEffect } from 'react';
-import { fetchKeys } from '../../Queries/table-keys.ts';
-import { useAuthProperties } from '../../Hooks/useAuthProperties.tsx';
+import { fetchKeys } from '../../Queries/table-keys';
+import { useAuthProperties } from '../../Hooks/useAuthProperties';
 
 const Search = () => {
   const form = useSearchFormContext();

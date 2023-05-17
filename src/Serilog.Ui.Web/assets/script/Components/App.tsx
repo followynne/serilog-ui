@@ -5,12 +5,12 @@ import {
   AppShell,
 } from '@mantine/core';
 import { useState } from 'react';
-import Sidebar from './ShellStructure/Sidebar.tsx';
+import Sidebar from './ShellStructure/Sidebar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query/';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import AppBody from './AppBody.tsx';
-import Head from './ShellStructure/Header.tsx';
-import { AuthPropertiesProvider } from '../Hooks/useAuthProperties.tsx';
+import AppBody from './AppBody';
+import Head from './ShellStructure/Header';
+import { AuthPropertiesProvider } from '../Hooks/useAuthProperties';
 
 const App = () => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('light');

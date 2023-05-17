@@ -1,5 +1,5 @@
 import { immerable } from 'immer';
-import { AuthType } from '../../types/types.ts';
+import { AuthType } from '../../types/types';
 import {decodeJwt } from 'jose'
 
 export class AuthProperties {

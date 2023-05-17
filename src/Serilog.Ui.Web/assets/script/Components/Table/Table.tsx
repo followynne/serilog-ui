@@ -1,8 +1,8 @@
 import { Loader, Table } from '@mantine/core';
-import useQueryLogsHook from '../../Hooks/useQueryLogsHook.tsx';
-import { IsStringNullOrEmptyGuard, getBgLogLevel } from '../../util.ts';
-import { LogLevel } from '../../../types/types.ts';
-import DetailsModal from './DetailsModal.tsx';
+import useQueryLogsHook from '../../Hooks/useQueryLogsHook';
+import { IsStringNullOrEmptyGuard, getBgLogLevel } from '../../util';
+import { LogLevel } from '../../../types/types';
+import DetailsModal from './DetailsModal';
 
 const SerilogResults = () => {
   const { data, isFetching } = useQueryLogsHook();

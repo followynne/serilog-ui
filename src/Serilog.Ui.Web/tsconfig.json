@@ -1,12 +1,11 @@
 ﻿{
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "module": "ESNext",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "noImplicitAny": false,
     "noEmitOnError": true,
     "removeComments": false,

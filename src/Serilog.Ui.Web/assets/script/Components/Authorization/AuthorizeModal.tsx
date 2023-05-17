@@ -1,8 +1,8 @@
 import { Group, Button, PasswordInput } from '@mantine/core';
-import { useAuthProperties } from '../../Hooks/useAuthProperties.tsx';
+import { useAuthProperties } from '../../Hooks/useAuthProperties';
 import { useImmer } from 'use-immer';
 import { type ChangeEvent, useEffect } from 'react';
-import { IsStringNullOrEmptyGuard } from '../../util.ts';
+import { IsStringNullOrEmptyGuard } from '../../util';
 
 const AuthorizeModal = ({ close }: { close: () => void }) => {
   const { authProps, updateBearerToken } = useAuthProperties();
