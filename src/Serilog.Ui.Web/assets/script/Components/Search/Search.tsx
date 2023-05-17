@@ -1,9 +1,5 @@
-import {
-  TextInput,
-  Button,
-  Select,
-  Grid,
-} from '@mantine/core';
+/* eslint-disable react/jsx-props-no-spreading */
+import { TextInput, Button, Select, Grid } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchFormContext } from '../../Hooks/SearchFormContext';
@@ -11,41 +7,42 @@ import useQueryLogsHook from '../../Hooks/useQueryLogsHook';
 import { useEffect } from 'react';
 import { fetchKeys } from '../../Queries/table-keys';
 import { useAuthProperties } from '../../Hooks/useAuthProperties';
+import { isArrayGuard, isStringGuard } from '../../util/guards';
 
 const Search = () => {
-  const form = useSearchFormContext();
   const { authProps } = useAuthProperties();
+  const form = useSearchFormContext();
   const queryTableKeys = useQuery({
     queryKey: ['get-keys'],
-    queryFn: async () => { return await fetchKeys(authProps)},
+    queryFn: async () => {
+      return await fetchKeys(authProps);
+    },
     staleTime: Infinity,
-    onSuccess: (data) =>{
-      form.setFieldValue('table', data && data.length ? data.at(0) : '')},
-    onError: (err) => console.error(err),
+    onSuccess: (data) => {
+      const tableKeysDefaultValue = isArrayGuard(data) && data.at(0);
+      form.setFieldValue(
+        'table',
+        isStringGuard(tableKeysDefaultValue) ? tableKeysDefaultValue : '',
+      );
+    },
+    onError: (err) => {
+      console.error(err);
+    },
   });
 
   const { refetch } = useQueryLogsHook(form.values, 1);
-  //  useQuery({
-  //   queryKey: ['get-logs'], //form.values, 1],
-  //   queryFn: () => fetchLogs(form.values, 1),
-  //   keepPreviousData: true,
-  //   enabled: false,
-  //   retry: 1,
-  //   // getNextPageParam: (ls, all) => {
-  //   //   !!ls ? ls.currentPage : 1;
-  //   // },
-  //   onError: (err) => console.error(err), // TODO: notification box
-  // });
 
   useEffect(() => {
-    refetch();
-  }, []);
+    const refecthLogs = async () => await refetch();
+
+    void refecthLogs();
+  }, [refetch]);
 
   return (
     <form
       onSubmit={form.onSubmit((values) => {
         console.log(values);
-        refetch();
+        void refetch(); // TODO temporary...
       })}
     >
       <Grid w="100%" justify="space-between" align="flex-end">
@@ -92,7 +89,6 @@ const Search = () => {
           <DateTimePicker
             label="Start date:"
             withSeconds={true}
-            // maw={400}
             mx="auto"
             {...form.getInputProps('startDate')}
           />
@@ -101,7 +97,6 @@ const Search = () => {
           <DateTimePicker
             label="End date:"
             withSeconds={true}
-            // maw={400}
             mx="auto"
             {...form.getInputProps('endDate')}
           />
@@ -119,19 +114,19 @@ const Search = () => {
             label="entries"
             data={[
               {
-                value: 10,
+                value: '10',
                 label: '10',
               },
               {
-                value: 25,
+                value: '25',
                 label: '25',
               },
               {
-                value: 50,
+                value: '50',
                 label: '50',
               },
               {
-                value: 100,
+                value: '100',
                 label: '100',
               },
             ]}

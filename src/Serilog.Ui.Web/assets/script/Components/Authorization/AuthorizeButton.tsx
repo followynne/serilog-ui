@@ -3,7 +3,7 @@ import { useAuthProperties } from '../../Hooks/useAuthProperties';
 import { useDisclosure } from '@mantine/hooks';
 import AuthorizeModal from './AuthorizeModal';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
-import { IsStringNullOrEmptyGuard } from '../../util';
+import { isStringGuard } from '../../util/guards';
 
 const AuthorizeButton = () => {
   const { authProps } = useAuthProperties();
@@ -11,12 +11,8 @@ const AuthorizeButton = () => {
 
   return (
     <>
-      <Button color='green' onClick={open}>
-        {!IsStringNullOrEmptyGuard(authProps.bearerToken) ? (
-          <IconLockCheck />
-        ) : (
-          <IconLockOpen />
-        )}
+      <Button color="green" onClick={open}>
+        {isStringGuard(authProps.bearerToken) ? <IconLockCheck /> : <IconLockOpen />}
         Authorize
       </Button>
       <Modal opened={opened} onClose={close} title="JWT Authorization" centered>

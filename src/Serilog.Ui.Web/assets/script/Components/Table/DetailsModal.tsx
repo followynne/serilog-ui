@@ -11,20 +11,25 @@ const DetailsModal = ({ modalContent }: { modalContent: string }) => {
       <Modal
         opened={opened}
         onClose={close}
-        title='Authentication'
+        centered
+        radius="sm"
+        size="xl"
+        title="???"
         overlayProps={{
           color:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[9]
-              : theme.colors.gray[2],
+            theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
           opacity: 0.55,
           blur: 3,
-        }}>
-        <Prism withLineNumbers language='json'>{modalContent}</Prism>
+        }}
+      >
+        <Prism withLineNumbers trim={false} language="json">
+          {/* // TODO Catch exception, pass directly json/xml from upper comp */}
+          {JSON.stringify(JSON.parse(modalContent), null, 2)}
+        </Prism>
       </Modal>
 
-      <Group position='center'>
-        <Button onClick={open}>open</Button>
+      <Group position="center">
+        <Button onClick={open}>Click to view</Button>
       </Group>
     </>
   );

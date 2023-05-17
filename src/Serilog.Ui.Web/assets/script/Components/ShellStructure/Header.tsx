@@ -1,6 +1,6 @@
 import { Header, MediaQuery, Burger, useMantineTheme } from '@mantine/core';
 import { type Dispatch, type SetStateAction } from 'react';
-import AuthorizeButton from '../Authorization/AuthorizeButton.tsx';
+import AuthorizeButton from '../Authorization/AuthorizeButton';
 
 const Head = ({
   isOpen,

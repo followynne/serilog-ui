@@ -9,7 +9,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
-import AuthorizeButton from '../Authorization/AuthorizeButton.tsx';
+import AuthorizeButton from '../Authorization/AuthorizeButton';
 
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();

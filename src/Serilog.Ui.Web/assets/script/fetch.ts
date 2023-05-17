@@ -4,76 +4,13 @@ import { printPagination } from './pagination';
 import {
   cleanHtmlTags,
   fixedLengthMessageWithModal,
-  formatDate,
-  formatXml,
+  printDate,
+  printXmlCode,
   getBgLogLevel,
 } from './util';
 import { AuthType, LogLevel, SearchForm, SearchResult } from '../types/types';
+
 import { AuthPropertiesSingleton } from './Authorization/AuthProperties';
-
-export const fetchLogs = (values: SearchForm, page: number) => {
-  console.log(values, page);
-
-  const prepareUrl = prepareSearchUrl(values, page);
-  if (!prepareUrl.areDatesAdmitted) return;
-
-  const token = sessionStorage.getItem('serilogui_token');
-  const isWindowsAuth = AuthPropertiesSingleton.authType !== AuthType.Windows;
-  const headers: Headers = new Headers();
-  if (isWindowsAuth) headers.set('Authorization', token);
-  return (
-    fetch(prepareUrl.url, {
-      headers,
-      credentials: isWindowsAuth ? 'include' : 'same-origin',
-    })
-      .then((req) => {
-        if (req.ok) return req.json() as Promise<SearchResult>;
-        return Promise.reject({
-          status: req.status,
-          message: 'Failed to fetch.',
-        });
-      })
-      // .then(onFetchLogs)
-      .catch((error) => {
-        console.warn(error);
-        if (error.status === 403) {
-          alert(
-            "You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.",
-          );
-          return;
-        }
-        alert(error.message);
-      })
-  );
-};
-
-const prepareSearchUrl = (input: SearchForm, identifiedPage?: number) => {
-  const {
-    startDate,
-    endDate,
-    table: key,
-    entriesPerPage: count,
-    level,
-    search: searchTerm,
-  } = input;
-  const page = identifiedPage ?? 1;
-
-  if (startDate && endDate) {
-    if (isAfter(startDate, endDate)) {
-      alert('Start date cannot be greater than end date');
-      return { areDatesAdmitted: false, url: '' };
-    }
-  }
-
-  // TODO: review dates parsing
-  const startAsString = startDate?.toISOString() || '';
-  const endAsString = endDate?.toISOString() || '';
-  const host = ['development', 'test'].includes(process.env.NODE_ENV)
-    ? ''
-    : location.pathname.replace('/index.html', '');
-  const url = `${host}/api/logs?&key=${key}&page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startAsString}&endDate=${endAsString}`;
-  return { areDatesAdmitted: true, url };
-};
 
 const onFetchLogs = (data: SearchResult) => {
   const tableBody = document.querySelector('#logTable tbody');
@@ -88,7 +25,7 @@ const onFetchLogs = (data: SearchResult) => {
             <td class="text-center"><span class="log-level text-white ${getBgLogLevel(
               LogLevel[log.level],
             )}">${log.level}</span></td>
-            <td class="text-center">${formatDate(log.timestamp)}</td>
+            <td class="text-center">${printDate(log.timestamp)}</td>
             <td class="log-message">
                 <span class="overflow-auto"><truncate length="100">${fixedLengthMessageWithModal(
                   cleanHtmlTags(log.message),
@@ -113,13 +50,6 @@ const onFetchLogs = (data: SearchResult) => {
   printPagination(data.total, data.count, data.currentPage);
 };
 
-const exceptionLog = (exception?: string) =>
-  !exception
-    ? ''
-    : `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
-        View <span style="display: none">${exception}
-    </span></a>`;
-
 // open an objectDetails modal
 const attachOpenDetailsModal = () => {
   document.querySelectorAll('.modal-trigger').forEach((i) =>
@@ -133,7 +63,7 @@ const attachOpenDetailsModal = () => {
 
       if (dataType === 'xml') {
         const htmlMsg = messageSpan.innerHTML;
-        message = formatXml(htmlMsg, '  ');
+        message = printXmlCode(htmlMsg, '  ');
         messageSpan.textContent = message;
         modalBody.classList.remove('wrapped');
       } else if (dataType === 'json') {

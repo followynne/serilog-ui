@@ -2,7 +2,7 @@ import { Group, Button, PasswordInput } from '@mantine/core';
 import { useAuthProperties } from '../../Hooks/useAuthProperties';
 import { useImmer } from 'use-immer';
 import { type ChangeEvent, useEffect } from 'react';
-import { IsStringNullOrEmptyGuard } from '../../util';
+import { isStringGuard } from '../../util/guards';
 
 const AuthorizeModal = ({ close }: { close: () => void }) => {
   const { authProps, updateBearerToken } = useAuthProperties();
@@ -20,7 +20,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         radius="md"
         size="md"
         value={token}
-        disabled={!IsStringNullOrEmptyGuard(authProps.bearerToken)}
+        disabled={isStringGuard(authProps.bearerToken)}
         withAsterisk
         autoComplete="off"
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -29,9 +29,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         }}
       />
 
-      <Group
-        display={IsStringNullOrEmptyGuard(authProps.bearerToken) ? 'inherit' : 'none'}
-      >
+      <Group display={!isStringGuard(authProps.bearerToken) ? 'inherit' : 'none'}>
         <Button
           onClick={() => {
             updateBearerToken(token);
@@ -41,9 +39,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         </Button>
         <Button onClick={close}>Close</Button>
       </Group>
-      <Group
-        display={!IsStringNullOrEmptyGuard(authProps.bearerToken) ? 'inherit' : 'none'}
-      >
+      <Group display={isStringGuard(authProps.bearerToken) ? 'inherit' : 'none'}>
         <Button
           onClick={() => {
             updateBearerToken('');

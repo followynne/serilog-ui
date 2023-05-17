@@ -1,5 +1,8 @@
-import { type AuthProperties } from '../Authorization/AuthProperties.ts';
-import { createAuthHeaders as createDefaultRequestInit, determineHost } from './util.ts';
+import { type AuthProperties } from '../Authorization/AuthProperties';
+import {
+  createAuthHeaders as createDefaultRequestInit,
+  determineHost,
+} from '../util/queries';
 
 export const fetchKeys = async (authProps: AuthProperties) => {
   const url = `${determineHost}/api/keys`;
@@ -10,6 +13,7 @@ export const fetchKeys = async (authProps: AuthProperties) => {
     const req = await fetch(url, requestInit);
 
     if (req.ok) return await (req.json() as Promise<string[]>);
+
     return await Promise.reject(new Error('Failed to fetch.'));
   } catch (error) {
     console.warn(error);

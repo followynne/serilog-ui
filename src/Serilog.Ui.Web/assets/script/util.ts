@@ -1,21 +1,6 @@
-﻿import { parseJSON, format } from 'date-fns';
-import { LogLevel } from '../types/types.ts';
+﻿import { LogLevel } from '../types/types';
 
-export const formatDate = (date: string) =>
-  format(parseJSON(date), 'PP H:mm:ss.SSS', { weekStartsOn: 1 });
-
-export const formatXml = (xml: string, tab = '\t') => {
-  let formatted = '';
-  let indent = '';
-  xml.split(/>\s*</).forEach(function (node) {
-    // decrease indent by one "tab"
-    if (node.match(/^\/\w/) != null) indent = indent.substring(tab.length);
-    formatted += indent + '<' + node + '>\r\n';
-    // increase indent
-    if (node.match(/^<?\w[^>]*[^/]$/) != null) indent += tab;
-  });
-  return formatted.substring(1, formatted.length - 3);
-};
+// TODO: migrate all fn to the correct util file
 
 export const fixedLengthMessageWithModal = (str: string, sliceEnd: number) => {
   if (str.length <= sliceEnd) {
@@ -54,6 +39,3 @@ export const getBgLogLevel = (logLevel: LogLevel) => {
       return 'bg-secondary';
   }
 };
-
-// https://stackoverflow.com/a/64940749/15129749
-export const IsStringNullOrEmptyGuard = (value: string) => (value ?? '') === '';

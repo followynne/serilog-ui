@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { useImmer } from 'use-immer';
-import { AuthProperties } from '../Authorization/AuthProperties.ts';
+import { AuthProperties } from '../Authorization/AuthProperties';
 
 interface AuthProps {
   authProps: AuthProperties;
@@ -21,8 +21,6 @@ export const AuthPropertiesProvider = ({
   const [authProps, setAuthProps] = useImmer(baseProps);
 
   const setToken = (bearerToken: string) => {
-    // authProps.bearerToken = bearerToken;
-
     setAuthProps((draft) => {
       draft.bearerToken = bearerToken;
     });

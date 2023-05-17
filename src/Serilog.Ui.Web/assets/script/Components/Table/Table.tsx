@@ -1,8 +1,10 @@
 import { Loader, Table } from '@mantine/core';
 import useQueryLogsHook from '../../Hooks/useQueryLogsHook';
-import { IsStringNullOrEmptyGuard, getBgLogLevel } from '../../util';
+import { getBgLogLevel } from '../../util';
 import { LogLevel } from '../../../types/types';
 import DetailsModal from './DetailsModal';
+import { isObjectGuard, isStringGuard } from '../../util/guards';
+import { printDate } from '../../util/prettyPrints';
 
 const SerilogResults = () => {
   const { data, isFetching } = useQueryLogsHook();
@@ -23,18 +25,18 @@ const SerilogResults = () => {
         </thead>
         <tbody>
           {!isFetching &&
-            !IsStringNullOrEmptyGuard(data) &&
+            data?.logs &&
+            // TODO
+            // isObjectGuard(data) &&
             data.logs.map((log) => (
               // TODO: all styles and modals
               <tr key={log.rowNo} className={log.level}>
                 <td>{log.rowNo}</td>
-                <td className={getBgLogLevel(LogLevel[log.level])}>
-                  {log.level}
-                </td>
-                <td>{log.timestamp}</td>
+                <td className={getBgLogLevel(LogLevel[log.level])}>{log.level}</td>
+                <td>{printDate(log.timestamp)}</td>
                 <td>{log.message}</td>
                 <td>
-                  {log.exception ? (
+                  {isStringGuard(log.exception) ? (
                     <DetailsModal modalContent={log.exception} />
                   ) : null}
                 </td>
@@ -44,7 +46,7 @@ const SerilogResults = () => {
             ))}
         </tbody>
       </Table>
-      {isFetching && <Loader variant='bars' />}
+      {isFetching && <Loader variant="bars" />}
     </div>
   );
 };
