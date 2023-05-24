@@ -15,63 +15,77 @@ using Ui.Web.Tests.Utilities.InMemoryDataProvider;
 
 namespace Ui.Web.Tests.Utilities;
 
-public class WebSampleProgramDefaultFactory : WebApplicationFactory<WebSampleProgram>
+public class WebAppFactory
 {
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    public class Default : WebApplicationFactory<WebSampleProgram>
     {
-        builder
-            .UseWebRoot(Directory.GetCurrentDirectory())
-            .UseTestServer()
-            .ConfigureServices(services =>
-            {
-                services.AddEndpointsApiExplorer();
-                Log.Logger = new LoggerConfiguration().WriteTo.InMemory().CreateLogger();
-                services.AddSerilogUi(options => options.UseInMemory());
-            })
-            .ConfigureTestServices(WithTestServices)
-            .Configure(WithCustomConfigure);
-    }
-
-    protected virtual void WithTestServices(IServiceCollection services) { }
-    protected virtual void WithCustomConfigure(IApplicationBuilder builder)
-    {
-        builder.UseSerilogUi();
-    }
-}
-
-public class WebSampleProgramWithTestServices : WebSampleProgramDefaultFactory
-{
-    protected override void WithTestServices(IServiceCollection services)
-    {
-        // mock some services
-        services.AddScoped<ISerilogUiAppRoutes, FakeAppRoutes>();
-    }
-
-    private class FakeAppRoutes : ISerilogUiAppRoutes
-    {
-        public UiOptions? Options { get; set; }
-        public Task GetHome(HttpContext httpContext)
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            httpContext.Response.StatusCode = 418;
-            return Task.CompletedTask;
+            builder
+                .UseWebRoot(Directory.GetCurrentDirectory())
+                .UseTestServer()
+                .ConfigureServices(services =>
+                {
+                    services.AddEndpointsApiExplorer();
+                    Log.Logger = new LoggerConfiguration().WriteTo.InMemory().CreateLogger();
+                    services.AddSerilogUi(options => options.UseInMemory());
+                })
+                .ConfigureTestServices(WithTestServices)
+                .Configure(WithCustomConfigure);
         }
-        public Task RedirectHome(HttpContext httpContext) => Task.CompletedTask;
-        public void SetOptions(UiOptions options) => Options = options;
-    }
-}
 
-public class WebSampleProgramWithForbiddenLocalRequest : WebSampleProgramDefaultFactory
-{
-    protected override void WithCustomConfigure(IApplicationBuilder builder)
-    {
-        builder.UseSerilogUi(options =>
+        protected virtual void WithTestServices(IServiceCollection services) { }
+        protected virtual void WithCustomConfigure(IApplicationBuilder builder)
         {
-            options.Authorization.AuthenticationType = AuthenticationType.Jwt;
-            options.Authorization.Filters = new[]
+            builder.UseSerilogUi();
+        }
+    }
+    public class WithMocks : Default
+    {
+        protected override void WithTestServices(IServiceCollection services)
+        {
+            // mock some services
+            services.AddScoped<ISerilogUiAppRoutes, FakeAppRoutes>();
+            services.AddScoped<ISerilogUiEndpoints, FakeAppRoutes>();
+        }
+
+        private class FakeAppRoutes : ISerilogUiAppRoutes, ISerilogUiEndpoints
+        {
+            public UiOptions? Options { get; set; }
+            public Task GetApiKeys(HttpContext httpContext) => Oper(httpContext);
+            public Task GetHome(HttpContext httpContext) => Oper(httpContext);
+            public Task GetLogs(HttpContext httpContext) => Oper(httpContext);
+            public Task RedirectHome(HttpContext httpContext) => Oper(httpContext);
+            public void SetOptions(UiOptions options) => Options = options;
+            private static Task Oper(HttpContext httpContext)
             {
+                httpContext.Response.StatusCode = 418;
+                return Task.CompletedTask;
+            }
+        }
+        
+        public class AndCustomOptions : WithMocks
+        {
+            protected override void WithCustomConfigure(IApplicationBuilder builder)
+            {
+                builder.UseSerilogUi(ui => { ui.RoutePrefix = "test"; });
+            }
+        }
+    }
+
+    public class WithForbiddenLocalRequest : Default
+    {
+        protected override void WithCustomConfigure(IApplicationBuilder builder)
+        {
+            builder.UseSerilogUi(options =>
+            {
+                options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+                options.Authorization.Filters = new[]
+                {
                         new ForbidLocalRequestFilter()
-                    };
-        });
+                        };
+            });
+        }
     }
 }
 

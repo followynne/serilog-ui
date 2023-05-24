@@ -8,11 +8,11 @@ using Xunit;
 namespace Serilog.Ui.Web.Tests.Authorization;
 
 [Trait("Ui-Authorization", "Web")]
-public class AuthorizationFilterDefaultTest : IClassFixture<WebSampleProgramDefaultFactory>
+public class AuthorizationFilterDefaultTest : IClassFixture<WebAppFactory.Default>
 {
     private readonly HttpClient _client;
 
-    public AuthorizationFilterDefaultTest(WebSampleProgramDefaultFactory factory)
+    public AuthorizationFilterDefaultTest(WebAppFactory.Default factory)
     {
         _client = factory.CreateClient();
     }
@@ -30,11 +30,11 @@ public class AuthorizationFilterDefaultTest : IClassFixture<WebSampleProgramDefa
 }
 
 [Trait("Ui-Authorization", "Web")]
-public class AuthorizationFilterWithUserImplementationTest : IClassFixture<WebSampleProgramWithForbiddenLocalRequest>
+public class AuthorizationFilterWithUserImplementationTest : IClassFixture<WebAppFactory.WithForbiddenLocalRequest>
 {
     private readonly HttpClient _client;
 
-    public AuthorizationFilterWithUserImplementationTest(WebSampleProgramWithForbiddenLocalRequest factory)
+    public AuthorizationFilterWithUserImplementationTest(WebAppFactory.WithForbiddenLocalRequest factory)
     {
         _client = factory.CreateClient();
     }

@@ -10,11 +10,11 @@ using Xunit;
 namespace Ui.Web.Tests.Extensions
 {
     [Trait("Ui-ApplicationBuilder", "Web")]
-    public class ApplicationBuilderExtensionsTest : IClassFixture<WebSampleProgramWithTestServices>
+    public class ApplicationBuilderExtensionsTest : IClassFixture<WebAppFactory.WithMocks>
     {
         private readonly HttpClient client;
 
-        public ApplicationBuilderExtensionsTest(WebSampleProgramWithTestServices program)
+        public ApplicationBuilderExtensionsTest(WebAppFactory.WithMocks program)
         {
             client = program.CreateClient();
         }
