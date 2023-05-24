@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using FluentAssertions;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Ui.Web.Tests.Utilities;
@@ -20,9 +21,10 @@ public class AuthorizationFilterDefaultTest : IClassFixture<WebSampleProgramDefa
     {
         // Act
         var response = await _client.GetAsync("/serilog-ui/index.html");
+        var result = response.EnsureSuccessStatusCode;
 
         // Assert
-        response.EnsureSuccessStatusCode();
+        result.Should().NotThrow<HttpRequestException>();
     }
 }
 

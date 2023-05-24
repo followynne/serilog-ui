@@ -65,6 +65,7 @@ namespace Serilog.Ui.Web.Endpoints
             Options = options;
         }
 
+        // TODO move outside to safely mock it
         private Func<Stream> IndexStream { get; } = () =>
             typeof(AuthorizationOptions)
             .GetTypeInfo()
