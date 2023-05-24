@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.Web.Tests.SerilogInMemoryDataProvider;
+namespace Ui.Web.Tests.Utilities.InMemoryDataProvider;
 
 public class SerilogInMemoryDataProvider : IDataProvider
 {

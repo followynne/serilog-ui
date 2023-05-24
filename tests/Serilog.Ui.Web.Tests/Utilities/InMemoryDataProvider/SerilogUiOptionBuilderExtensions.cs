@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 
-namespace Serilog.Ui.Web.Tests.SerilogInMemoryDataProvider
+namespace Ui.Web.Tests.Utilities.InMemoryDataProvider
 {
     /// <summary>
     ///   SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.

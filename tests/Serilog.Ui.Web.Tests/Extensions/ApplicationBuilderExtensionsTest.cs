@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Ui.Web.Tests.Extensions
 {
+    [Trait("Ui-ApplicationBuilder", "Web")]
     public class ApplicationBuilderExtensionsTest : IClassFixture<WebSampleProgramWithTestServices>
     {
         private readonly HttpClient client;
@@ -19,7 +20,7 @@ namespace Ui.Web.Tests.Extensions
         }
 
         [Fact]
-        public async Task It_register_ui_middlewareAsync()
+        public async Task It_register_ui_middleware()
         {
             var middlewareResponse = await client.GetAsync("/serilog-ui/index.html");
 
@@ -34,6 +35,16 @@ namespace Ui.Web.Tests.Extensions
             var fail = () => builder.UseSerilogUi(null);
 
             fail.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void It_not_throws_on_null_parameters()
+        {
+            var webApp = WebApplication.CreateBuilder().Build();
+
+            var fail = () => webApp.UseSerilogUi(null);
+
+            fail.Should().NotThrow();
         }
     }
 }

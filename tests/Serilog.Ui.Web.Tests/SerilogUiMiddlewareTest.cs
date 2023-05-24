@@ -3,6 +3,7 @@ using Xunit;
 
 namespace Ui.Web.Tests
 {
+    [Trait("Ui-Middleware", "Web")]
     public class SerilogUiMiddlewareTest
     {
         [Fact(Skip = "Sample Test")]

@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Authorization;
 
+[Trait("Ui-Authorization", "Web")]
 public class AuthorizationFilterDefaultTest : IClassFixture<WebSampleProgramDefaultFactory>
 {
     private readonly HttpClient _client;
@@ -28,6 +29,7 @@ public class AuthorizationFilterDefaultTest : IClassFixture<WebSampleProgramDefa
     }
 }
 
+[Trait("Ui-Authorization", "Web")]
 public class AuthorizationFilterWithUserImplementationTest : IClassFixture<WebSampleProgramWithForbiddenLocalRequest>
 {
     private readonly HttpClient _client;
