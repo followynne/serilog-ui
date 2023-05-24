@@ -8,7 +8,7 @@ namespace Serilog.Ui.Web
     {
         public static bool IsLocal(this HttpRequest request)
         {
-            var ipAddress = request.HttpContext.Request.Headers["X-forwarded-for"].FirstOrDefault();
+            var ipAddress = request.Headers["X-forwarded-for"].FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(ipAddress))
                 return false;
 
@@ -20,8 +20,8 @@ namespace Serilog.Ui.Web
                     : IPAddress.IsLoopback(connection.RemoteIpAddress);
             }
 
-            // for in memory TestServer or when dealing with default connection info
-            return connection.RemoteIpAddress == null && connection.LocalIpAddress == null;
+            // we know remote ip is null, thus it can be only be local
+            return true;
         }
     }
 }
