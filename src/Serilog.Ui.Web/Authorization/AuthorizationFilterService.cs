@@ -9,24 +9,19 @@ namespace Serilog.Ui.Web.Authorization
     internal interface IAuthorizationFilterService
     {
         Task CheckAccess(HttpContext httpContext,
+            UiOptions options,
             Func<HttpContext, Task> onSuccess,
             Func<HttpResponse, Task> onFailure = null);
     }
 
     internal class AuthorizationFilterService : IAuthorizationFilterService
     {
-        private readonly UiOptions _options;
-
-        public AuthorizationFilterService(UiOptions options)
-        {
-            _options = options;
-        }
-
         public async Task CheckAccess(HttpContext httpContext,
+            UiOptions options,
             Func<HttpContext, Task> onSuccess,
             Func<HttpResponse, Task> onFailure = null)
         {
-            var accessCheck = await CanAccess(httpContext);
+            var accessCheck = await CanAccess(httpContext, options);
             if (!accessCheck)
             {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
@@ -37,11 +32,11 @@ namespace Serilog.Ui.Web.Authorization
             await onSuccess(httpContext);
         }
 
-        private async Task<bool> CanAccess(HttpContext httpContext)
+        private static async Task<bool> CanAccess(HttpContext httpContext, UiOptions options)
         {
-            var syncFilterResult = _options.Authorization.Filters.All(filter => filter.Authorize(httpContext));
+            var syncFilterResult = options.Authorization.Filters.All(filter => filter.Authorize(httpContext));
 
-            var asyncFilter = await Task.WhenAll(_options.Authorization.AsyncFilters.Select(filter => filter.AuthorizeAsync(httpContext)));
+            var asyncFilter = await Task.WhenAll(options.Authorization.AsyncFilters.Select(filter => filter.AuthorizeAsync(httpContext)));
             var asyncFilterResult = asyncFilter.Any(filter => !filter);
 
             return syncFilterResult && !asyncFilterResult;

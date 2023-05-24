@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
+using Ardalis.GuardClauses;
 
 namespace Serilog.Ui.Web.Endpoints
 {
@@ -24,8 +25,15 @@ namespace Serilog.Ui.Web.Endpoints
             };
         }
 
-        public async Task GetHome(HttpContext httpContext, UiOptions options)
+        public UiOptions Options { get; private set; }
+
+        public async Task GetHome(HttpContext httpContext)
         {
+#if NET6_0_OR_GREATER
+            Guard.Against.Null(Options);
+#else
+            Guard.Against.Null(Options, nameof(Options));
+#endif
             var response = httpContext.Response;
 
             await using var stream = IndexStream();
@@ -35,7 +43,7 @@ namespace Serilog.Ui.Web.Endpoints
                 return;
             }
 
-            var htmlString = await LoadStream(stream, options);
+            var htmlString = await LoadStream(stream, Options);
             response.StatusCode = 200;
             response.ContentType = "text/html;charset=utf-8";
 
@@ -50,6 +58,11 @@ namespace Serilog.Ui.Web.Endpoints
             httpContext.Response.Headers["Location"] = indexUrl;
 
             return Task.CompletedTask;
+        }
+
+        public void SetOptions(UiOptions options)
+        {
+            Options = options;
         }
 
         private Func<Stream> IndexStream { get; } = () =>

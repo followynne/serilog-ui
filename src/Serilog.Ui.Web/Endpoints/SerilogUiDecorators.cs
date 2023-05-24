@@ -15,8 +15,9 @@ namespace Serilog.Ui.Web.Endpoints
             _decoratedService = decoratedService;
             _authFilterService = authFilterService;
         }
+        public UiOptions Options { get; private set; }
 
-        public Task GetHome(HttpContext httpContext, UiOptions options)
+        public Task GetHome(HttpContext httpContext)
         {
             var changeResponse = (HttpResponse response) =>
             {
@@ -24,12 +25,19 @@ namespace Serilog.Ui.Web.Endpoints
                 return response.WriteAsync("<p>You don't have enough permission to access this page!</p>", Encoding.UTF8);
             };
 
-            return _authFilterService.CheckAccess(httpContext, (context) => _decoratedService.GetHome(context, options), changeResponse);
+            // we set it, as it's required in the current impl
+            _decoratedService.SetOptions(Options);
+            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetHome, changeResponse);
         }
 
         public Task RedirectHome(HttpContext httpContext)
         {
-            return _authFilterService.CheckAccess(httpContext, _decoratedService.RedirectHome);
+            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.RedirectHome);
+        }
+
+        public void SetOptions(UiOptions options)
+        {
+            Options = options;
         }
     }
 
@@ -44,14 +52,21 @@ namespace Serilog.Ui.Web.Endpoints
             _authFilterService = authFilterService;
         }
 
+        public UiOptions Options { get; private set; }
+
         public Task GetApiKeys(HttpContext httpContext)
         {
-            return _authFilterService.CheckAccess(httpContext, _decoratedService.GetApiKeys);
+            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetApiKeys);
         }
 
         public Task GetLogs(HttpContext httpContext)
         {
-            return _authFilterService.CheckAccess(httpContext, _decoratedService.GetLogs);
+            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetLogs);
+        }
+
+        public void SetOptions(UiOptions options)
+        {
+            Options = options;
         }
     }
 }

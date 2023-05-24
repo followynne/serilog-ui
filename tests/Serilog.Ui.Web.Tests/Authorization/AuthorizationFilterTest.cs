@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Ui.Web.Tests.Utilities;
@@ -7,11 +6,11 @@ using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Authorization;
 
-public class AuthorizationFilterDefaultTest : IClassFixture<WebApplicationFactory<WebSampleProgram>>
+public class AuthorizationFilterDefaultTest : IClassFixture<WebSampleProgramDefaultFactory>
 {
     private readonly HttpClient _client;
 
-    public AuthorizationFilterDefaultTest(WebApplicationFactory<WebSampleProgram> factory)
+    public AuthorizationFilterDefaultTest(WebSampleProgramDefaultFactory factory)
     {
         _client = factory.CreateClient();
     }

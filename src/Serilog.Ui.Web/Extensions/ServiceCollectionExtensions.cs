@@ -36,7 +36,6 @@ namespace Serilog.Ui.Web
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
 
-            services.AddScoped<UiOptions>();
             services.AddScoped<IAuthorizationFilterService, AuthorizationFilterService>();
             
             services.AddScoped<ISerilogUiEndpoints, SerilogUiEndpoints>();
