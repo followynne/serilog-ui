@@ -25,8 +25,6 @@ namespace Serilog.Ui.Web.Endpoints
                 return response.WriteAsync("<p>You don't have enough permission to access this page!</p>", Encoding.UTF8);
             };
 
-            // we set it, as it's required in the current impl
-            _decoratedService.SetOptions(Options);
             return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetHome, changeResponse);
         }
 
@@ -38,6 +36,7 @@ namespace Serilog.Ui.Web.Endpoints
         public void SetOptions(UiOptions options)
         {
             Options = options;
+            _decoratedService.SetOptions(options);
         }
     }
 
@@ -67,6 +66,7 @@ namespace Serilog.Ui.Web.Endpoints
         public void SetOptions(UiOptions options)
         {
             Options = options;
+            _decoratedService.SetOptions(options);
         }
     }
 }

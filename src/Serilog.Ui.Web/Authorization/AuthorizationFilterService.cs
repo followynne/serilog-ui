@@ -25,7 +25,10 @@ namespace Serilog.Ui.Web.Authorization
             if (!accessCheck)
             {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                await onFailure?.Invoke(httpContext.Response);
+                if (onFailure != null)
+                {
+                    await onFailure.Invoke(httpContext.Response);
+                }
                 return;
             }
 
