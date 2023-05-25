@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Ui.Web.Tests.Extensions
 {
+    [Trait("Ui-Injection", "Web")]
     public class ContentInjectionTest
     {
         [Fact]

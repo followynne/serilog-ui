@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Sinks.InMemory;
 using Serilog.Ui.Web;
+using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Endpoints;
 using Serilog.Ui.Web.Tests.Authorization;
 using System.IO;
@@ -63,7 +64,7 @@ public class WebAppFactory
                 return Task.CompletedTask;
             }
         }
-        
+
         public class AndCustomOptions : WithMocks
         {
             protected override void WithCustomConfigure(IApplicationBuilder builder)
@@ -73,18 +74,50 @@ public class WebAppFactory
         }
     }
 
-    public class WithForbiddenLocalRequest : Default
+    public class WithForbidden
     {
-        protected override void WithCustomConfigure(IApplicationBuilder builder)
+        public class Sync : Default
         {
-            builder.UseSerilogUi(options =>
+            protected override void WithCustomConfigure(IApplicationBuilder builder)
             {
-                options.Authorization.AuthenticationType = AuthenticationType.Jwt;
-                options.Authorization.Filters = new[]
+                builder.UseSerilogUi(options =>
                 {
-                        new ForbidLocalRequestFilter()
-                        };
-            });
+                    options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+                    options.Authorization.Filters = new IUiAuthorizationFilter[]
+                    {
+                        new ForbidLocalRequestFilter(),
+                        new AdmitRequestFilter()
+                    };
+                    options.Authorization.AsyncFilters = new[]
+                    {
+                        new AdmitRequestAsyncFilter()
+                    };
+                });
+            }
+        }
+
+        public class Async : Default
+        {
+            protected override void WithCustomConfigure(IApplicationBuilder builder)
+            {
+                builder.UseSerilogUi(options =>
+                {
+                    options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+                    builder.UseSerilogUi(options =>
+                    {
+                        options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+                        options.Authorization.Filters = new[]
+                        {
+                        new AdmitRequestFilter()
+                    };
+                        options.Authorization.AsyncFilters = new IUiAsyncAuthorizationFilter[]
+                        {
+                        new ForbidLocalRequestAsyncFilter(),
+                        new AdmitRequestAsyncFilter()
+                    };
+                    });
+                });
+            }
         }
     }
 }

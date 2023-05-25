@@ -34,12 +34,12 @@ namespace Serilog.Ui.Web.Authorization
 
         private static async Task<bool> CanAccess(HttpContext httpContext, UiOptions options)
         {
-            var syncFilterResult = options.Authorization.Filters.All(filter => filter.Authorize(httpContext));
+            var syncFilterResult = options.Authorization.Filters.Any(filter => !filter.Authorize(httpContext));
 
             var asyncFilter = await Task.WhenAll(options.Authorization.AsyncFilters.Select(filter => filter.AuthorizeAsync(httpContext)));
             var asyncFilterResult = asyncFilter.Any(filter => !filter);
 
-            return syncFilterResult && !asyncFilterResult;
+            return !syncFilterResult && !asyncFilterResult;
         }
     }
 }
