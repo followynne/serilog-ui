@@ -22,47 +22,47 @@ namespace Ui.Web.Tests
         }
 
         [Theory]
-        [InlineData("/serilog-ui/api/keys/")]
-        [InlineData("/serilog-ui/api/logs/")]
-        [InlineData("/serilog-ui/")]
-        [InlineData("/serilog-ui/index.html")]
-        public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq)
+        [InlineData("/serilog-ui/api/keys/", 417)]
+        [InlineData("/serilog-ui/api/logs/", 409)]
+        [InlineData("/serilog-ui/", 400)]
+        [InlineData("/serilog-ui/index.html", 418)]
+        public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq, int statusCode)
         {
             var send = await httpClient.GetAsync(pathReq);
 
-            send.StatusCode.Should().Be((HttpStatusCode)418);
+            send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
 
         [Theory]
-        [InlineData("/test/api/keys/")]
-        [InlineData("/test/api/logs/")]
-        [InlineData("/test/")]
-        [InlineData("/test/index.html")]
-        public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq)
+        [InlineData("/test/api/keys/", 417)]
+        [InlineData("/test/api/logs/", 409)]
+        [InlineData("/test/", 400)]
+        [InlineData("/test/index.html", 418)]
+        public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq, int statusCode)
         {
             var send = await httpClientWithCustomOpts.GetAsync(pathReq);
 
-            send.StatusCode.Should().Be((HttpStatusCode)418);
+            send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
 
         [Theory]
-        [InlineData("fake-prefix/api/keys/")]
-        [InlineData("fake-prefix/api/logs/")]
-        [InlineData("/fake-prefix/")]
-        [InlineData("/fake-prefix/index.html")]
-        public async Task It_proceeds_onwards_when_request_does_not_match_options_prefix(string pathReq)
+        [InlineData("fake-prefix/api/keys/", 417)]
+        [InlineData("fake-prefix/api/logs/", 409)]
+        [InlineData("/fake-prefix/", 400)]
+        [InlineData("/fake-prefix/index.html", 418)]
+        public async Task It_proceeds_onwards_when_request_does_not_match_options_prefix(string pathReq, int statusCode)
         {
             var send = await httpClient.GetAsync(pathReq);
 
-            send.StatusCode.Should().NotBe((HttpStatusCode)418);
+            send.StatusCode.Should().NotBe((HttpStatusCode)statusCode);
         }
 
         [Theory]
-        [InlineData("/serilog-ui/api/keys/")]
-        [InlineData("/serilog-ui/api/logs/")]
-        [InlineData("/serilog-ui/")]
-        [InlineData("/serilog-ui/index.html")]
-        public async Task It_proceeds_onwards_when_request_is_not_a_get(string pathReq)
+        [InlineData("/serilog-ui/api/keys/", 417)]
+        [InlineData("/serilog-ui/api/logs/", 409)]
+        [InlineData("/serilog-ui/", 400)]
+        [InlineData("/serilog-ui/index.html", 418)]
+        public async Task It_proceeds_onwards_when_request_is_not_a_get(string pathReq, int statusCode)
         {
             var methods = new HttpMethod[] {
                 HttpMethod.Connect, HttpMethod.Delete, HttpMethod.Head, HttpMethod.Options,
@@ -74,7 +74,7 @@ namespace Ui.Web.Tests
                 var requestMsg = new HttpRequestMessage(method, pathReq);
                 var send = await httpClient.SendAsync(requestMsg);
 
-                send.StatusCode.Should().NotBe((HttpStatusCode)418);
+                send.StatusCode.Should().NotBe((HttpStatusCode)statusCode);
             }
         }
     }
