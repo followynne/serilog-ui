@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Ui.Web.Tests.Endpoints
 {
-    [Trait("Ui-Endpoints", "Web")]
+    [Trait("Ui-Api-Decorators", "Web")]
     public class SerilogUiDecoratorsTest
     {
         private readonly AuthorizationFilterService authMock;
@@ -60,19 +60,39 @@ namespace Ui.Web.Tests.Endpoints
             sutEndpointsDecorator.SetOptions(uiOpts);
 
             var defaultHttp = new DefaultHttpContext();
+            await sutRoutesDecorator.RedirectHome(defaultHttp);
+            defaultHttp.Response.StatusCode.Should().Be(403);
+            appRoutesMock.Verify(p => p.RedirectHome(It.IsAny<HttpContext>()), Times.Never);
+
+            var defaultHttp2 = new DefaultHttpContext();
+            await sutEndpointsDecorator.GetLogs(defaultHttp2);
+            defaultHttp2.Response.StatusCode.Should().Be(403);
+            endpointMock.Verify(p => p.GetLogs(It.IsAny<HttpContext>()), Times.Never);
+
+            var defaultHttp3 = new DefaultHttpContext();
+            await sutEndpointsDecorator.GetApiKeys(defaultHttp3);
+            defaultHttp3.Response.StatusCode.Should().Be(403);
+            endpointMock.Verify(p => p.GetApiKeys(It.IsAny<HttpContext>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task It_blocks_the_GetHome_on_failed_authentication_with_custom_delegate()
+        {
+            var uiOpts = new UiOptions();
+            uiOpts.Authorization.Filters = new IUiAuthorizationFilter[] { new ForbidLocalRequestFilter() };
+            sutRoutesDecorator.SetOptions(uiOpts);
+            sutEndpointsDecorator.SetOptions(uiOpts);
+
+            var defaultHttp = new DefaultHttpContext();
+            defaultHttp.Response.Body = new MemoryStream();
             await sutRoutesDecorator.GetHome(defaultHttp);
 
-            await sutRoutesDecorator.RedirectHome(new DefaultHttpContext());
-            await sutEndpointsDecorator.GetLogs(new DefaultHttpContext());
-            await sutEndpointsDecorator.GetApiKeys(new DefaultHttpContext());
-
+            defaultHttp.Response.StatusCode.Should().Be(403);
             appRoutesMock.Verify(p => p.GetHome(It.IsAny<HttpContext>()), Times.Never);
+
+            defaultHttp.Response.Body.Seek(0, SeekOrigin.Begin);
             var bodyWrite = await new StreamReader(defaultHttp.Response.Body).ReadToEndAsync();
             bodyWrite.Should().Be("<p>You don't have enough permission to access this page!</p>");
-            
-            appRoutesMock.Verify(p => p.RedirectHome(It.IsAny<HttpContext>()), Times.Never);
-            endpointMock.Verify(p => p.GetLogs(It.IsAny<HttpContext>()), Times.Never);
-            endpointMock.Verify(p => p.GetApiKeys(It.IsAny<HttpContext>()), Times.Never);
         }
     }
 }
