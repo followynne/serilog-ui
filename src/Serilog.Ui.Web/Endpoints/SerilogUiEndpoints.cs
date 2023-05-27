@@ -38,7 +38,6 @@ namespace Serilog.Ui.Web.Endpoints
                 httpContext.Response.ContentType = "application/json;charset=utf-8";
                 if (_providerKeys == null)
                 {
-                    // TODO: sure about this?
                     var aggregateDataProvider = httpContext.RequestServices.GetRequiredService<AggregateDataProvider>();
                     _providerKeys = aggregateDataProvider.Keys.ToArray();
                 }

@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
 using Newtonsoft.Json.Serialization;
 using Ardalis.GuardClauses;
 
@@ -14,8 +13,9 @@ namespace Serilog.Ui.Web.Endpoints
     internal class SerilogUiAppRoutes : ISerilogUiAppRoutes
     {
         private readonly JsonSerializerSettings _jsonSerializerOptions;
+        private readonly IAppStreamLoader streamLoader;
 
-        public SerilogUiAppRoutes()
+        public SerilogUiAppRoutes(IAppStreamLoader streamLoader)
         {
             _jsonSerializerOptions = new JsonSerializerSettings
             {
@@ -23,6 +23,7 @@ namespace Serilog.Ui.Web.Endpoints
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Formatting = Formatting.None
             };
+            this.streamLoader = streamLoader;
         }
 
         public UiOptions Options { get; private set; }
@@ -36,9 +37,10 @@ namespace Serilog.Ui.Web.Endpoints
 #endif
             var response = httpContext.Response;
 
-            await using var stream = IndexStream();
+            using var stream = streamLoader.GetIndex();
             if (stream is null)
             {
+                response.StatusCode = 500;
                 await response.WriteAsync("<div>Server error while loading assets. Please contact administration.</div>", Encoding.UTF8);
                 return;
             }
@@ -64,13 +66,6 @@ namespace Serilog.Ui.Web.Endpoints
         {
             Options = options;
         }
-
-        // TODO move outside to safely mock it
-        private Func<Stream> IndexStream { get; } = () =>
-            typeof(AuthorizationOptions)
-            .GetTypeInfo()
-            .Assembly
-            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.dist.index.html");
 
         private async Task<string> LoadStream(Stream stream, UiOptions options)
         {

@@ -37,7 +37,8 @@ namespace Serilog.Ui.Web
             optionsBuilder.Invoke(builder);
 
             services.AddScoped<IAuthorizationFilterService, AuthorizationFilterService>();
-            
+            services.AddSingleton<IAppStreamLoader, AppStreamLoader>();
+
             services.AddScoped<ISerilogUiEndpoints, SerilogUiEndpoints>();
             services.Decorate<ISerilogUiEndpoints, SerilogUiEndpointsDecorator>();
 
