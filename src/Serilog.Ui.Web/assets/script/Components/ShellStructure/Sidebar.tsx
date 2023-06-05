@@ -10,10 +10,12 @@ import {
 } from '@mantine/core';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import AuthorizeButton from '../Authorization/AuthorizeButton';
+import { isStringGuard } from '../../util/guards';
 
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
+  const homeUrl = window.config.homeUrl;
 
   return (
     <Navbar
@@ -46,9 +48,12 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
           <NavLink
             label="Home"
             description="Home"
+            component={isStringGuard(homeUrl) ? 'a' : 'button'}
+            href={isStringGuard(homeUrl) ? homeUrl : ''}
+            target="_blank"
             icon={
               <Badge size="xs" variant="filled" color="red" w={16} h={16} p={0}>
-                3
+                TODO?
               </Badge>
             }
             sx={(theme) => ({
