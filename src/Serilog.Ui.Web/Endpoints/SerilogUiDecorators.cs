@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Ardalis.GuardClauses;
+using Microsoft.AspNetCore.Http;
 using Serilog.Ui.Web.Authorization;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,18 +20,34 @@ namespace Serilog.Ui.Web.Endpoints
 
         public Task GetHome(HttpContext httpContext)
         {
+#if NET6_0_OR_GREATER
+            Guard.Against.Null(Options);
+#else
+            Guard.Against.Null(Options, nameof(Options));
+#endif
+
             var changeResponse = (HttpResponse response) =>
             {
                 response.ContentType = "text/html;charset=utf-8";
                 return response.WriteAsync("<p>You don't have enough permission to access this page!</p>", Encoding.UTF8);
             };
 
-            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetHome, changeResponse);
+            return Options.Authorization.RunAuthorizationFilterOnAppRoutes ?
+                _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetHome, changeResponse) :
+                _decoratedService.GetHome(httpContext);
         }
 
         public Task RedirectHome(HttpContext httpContext)
         {
-            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.RedirectHome);
+#if NET6_0_OR_GREATER
+            Guard.Against.Null(Options);
+#else
+            Guard.Against.Null(Options, nameof(Options));
+#endif
+
+            return Options.Authorization.RunAuthorizationFilterOnAppRoutes ?
+                _authFilterService.CheckAccess(httpContext, Options, _decoratedService.RedirectHome) :
+                _decoratedService.RedirectHome(httpContext);
         }
 
         public void SetOptions(UiOptions options)

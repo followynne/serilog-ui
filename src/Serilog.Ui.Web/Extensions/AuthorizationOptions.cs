@@ -27,6 +27,13 @@ namespace Serilog.Ui.Web
         ///   Gets or sets the AsyncAuthorization filters.
         /// </summary>
         public IEnumerable<IUiAsyncAuthorizationFilter> AsyncFilters { get; set; } = Array.Empty<IUiAsyncAuthorizationFilter>();
+
+        /// <summary>
+        /// Set to true if the authorization filters should be run
+        /// when accessing the serilog-ui main pages.
+        /// Used to block unauthorized access to the logs ui.
+        /// </summary>
+        public bool RunAuthorizationFilterOnAppRoutes { get; set; } = false;
     }
 
     public enum AuthenticationType
