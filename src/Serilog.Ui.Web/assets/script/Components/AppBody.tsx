@@ -1,5 +1,6 @@
 import { type SearchForm } from '../../types/types';
 import { SearchFormProvider, useSearchForm } from '../Hooks/SearchFormContext';
+import Paging from './Search/Paging';
 import Search from './Search/Search';
 import SerilogResults from './Table/Table';
 
@@ -21,7 +22,9 @@ const AppBody = () => {
     <>
       <SearchFormProvider form={methods}>
         <Search />
+        <Paging />
         <SerilogResults />
+        <Paging />
       </SearchFormProvider>
     </>
   );

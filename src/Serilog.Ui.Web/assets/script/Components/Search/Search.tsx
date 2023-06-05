@@ -30,17 +30,18 @@ const Search = () => {
     },
   });
 
-  const { refetch } = useQueryLogsHook(form.values, 1);
+  const { refetch } = useQueryLogsHook();
 
   useEffect(() => {
-    const refecthLogs = async () => await refetch();
+    const refetchLogs = async () => await refetch();
 
-    void refecthLogs();
+    void refetchLogs();
   }, [refetch]);
 
   return (
     <form
       onSubmit={form.onSubmit((values) => {
+        form.setFieldValue('page', 1);
         console.log(values);
         void refetch(); // TODO temporary...
       })}

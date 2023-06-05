@@ -4,10 +4,10 @@ import { isDefinedGuard } from '../util/guards';
 import { createAuthHeaders, determineHost } from '../util/queries';
 import { AuthProperties } from '../Authorization/AuthProperties';
 
-export const fetchLogs = async (values: SearchForm, page: number, bearerToken: string) => {
-  console.log(values, page);
+export const fetchLogs = async (values: SearchForm, bearerToken: string) => {
+  console.log(values, values.page);
 
-  const prepareUrl = prepareSearchUrl(values, page);
+  const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 
   const authProps = new AuthProperties();

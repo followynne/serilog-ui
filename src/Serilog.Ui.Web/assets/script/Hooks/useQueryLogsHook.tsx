@@ -2,13 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { type SearchForm } from '../../types/types';
 import { fetchLogs } from '../Queries/logs';
 import { useAuthProperties } from './useAuthProperties';
+import { useSearchFormContext } from './SearchFormContext';
 
-const useQueryLogsHook = (v?: SearchForm, i?: number) =>{
+const useQueryLogsHook = () =>{
   const { authProps } = useAuthProperties();
+  const form = useSearchFormContext();
 
   return useQuery({
-    queryKey: ['get-logs', authProps.bearerToken], // form.values, 1],
-    queryFn: async () => (v && i ? await fetchLogs(v, i, authProps.bearerToken) : null),
+    queryKey: ['get-logs', authProps.bearerToken, form.values], // form.values, 1],
+    queryFn: async () => (form.values ? await fetchLogs(form.values, authProps.bearerToken) : null),
     keepPreviousData: true,
     refetchOnWindowFocus: false,
     // enabled: false,

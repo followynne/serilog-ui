@@ -76,4 +76,5 @@ export interface SearchForm {
   startDate: Date | null;
   endDate: Date | null;
   search: string;
+  page: number;
 }
