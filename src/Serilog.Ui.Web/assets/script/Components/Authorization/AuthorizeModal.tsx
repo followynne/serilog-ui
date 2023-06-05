@@ -37,7 +37,6 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         >
           Save
         </Button>
-        <Button onClick={close}>Close</Button>
       </Group>
       <Group display={isStringGuard(authProps.bearerToken) ? 'inherit' : 'none'}>
         <Button
@@ -47,6 +46,9 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         >
           Change Token
         </Button>
+      </Group>
+      <Group>
+        <Button onClick={close}>Close</Button>
       </Group>
     </form>
   );
