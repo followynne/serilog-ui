@@ -110,30 +110,6 @@ const Search = () => {
             {...form.getInputProps('search')}
           />
         </Grid.Col>{' '}
-        <Grid.Col xs={3} sm={3} md={2} lg={3} orderSm={5} orderMd={5}>
-          <Select
-            label="entries"
-            data={[
-              {
-                value: '10',
-                label: '10',
-              },
-              {
-                value: '25',
-                label: '25',
-              },
-              {
-                value: '50',
-                label: '50',
-              },
-              {
-                value: '100',
-                label: '100',
-              },
-            ]}
-            {...form.getInputProps('entriesPerPage')}
-          ></Select>
-        </Grid.Col>
         <Grid.Col xs={3} sm={3} md={2} lg={3} orderSm={7}>
           <Button type="submit">Submit</Button>
         </Grid.Col>
