@@ -1,26 +1,24 @@
 import { isAfter } from 'date-fns';
 import { type SearchResult, type SearchForm } from '../../types/types';
-import { isDefinedGuard } from '../util/guards';
+import { isDefinedGuard, isStringGuard } from '../util/guards';
 import { createAuthHeaders, determineHost } from '../util/queries';
 import { AuthProperties } from '../Authorization/AuthProperties';
 
-export const fetchLogs = async (values: SearchForm, bearerToken: string) => {
+export const fetchLogs = async (values: SearchForm) => {
   console.log(values, values.page);
 
   const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 
   const authProps = new AuthProperties();
-  console.log(authProps);
-  // const token = sessionStorage.getItem('serilogui_token');
 
   try {
+    // TODO: test auth
     const req = await fetch(prepareUrl.url, createAuthHeaders(authProps));
+    console.log(req)
     if (req.ok) return (await req.json()) as SearchResult;
 
     return await Promise.reject(new Error('Failed to fetch.'));
-
-    // TODO: .then(onFetchLogs)
   } catch (error) {
     console.warn(error);
     if (error.status === 403) {
@@ -52,10 +50,21 @@ const prepareSearchUrl = (input: SearchForm, identifiedPage?: number) => {
   }
 
   // TODO: review dates parsing
-  const startAsString = startDate?.toISOString() || '';
-  const endAsString = endDate?.toISOString() || '';
+  const startAsString = startDate?.toISOString() ?? '';
+  const endAsString = endDate?.toISOString() ?? '';
 
-  // TODO change url creation to include query params only if value defined...
-  const url = `${determineHost}/api/logs?&key=${key}&page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startAsString}&endDate=${endAsString}`;
+  // TODO check url creation result when using
+  const url = `${determineHost}/api/logs?page=${page}&count=${count}\
+${queryParamIfSet('key', key)}\
+${queryParamIfSet('level', level)}\
+${queryParamIfSet('search', searchTerm)}\
+${queryParamIfSet('startDate', startAsString)}\
+${queryParamIfSet('endDate', endAsString)}`;
+
   return { areDatesAdmitted: true, url };
 };
+
+const queryParamIfSet = (paramName: string, paramValue?: string | null) =>
+  isDefinedGuard(paramValue) && isStringGuard(paramValue)
+    ? `&${paramName}=${paramValue}`
+    : '';

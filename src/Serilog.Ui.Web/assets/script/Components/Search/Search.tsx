@@ -8,6 +8,12 @@ import { useEffect } from 'react';
 import { fetchKeys } from '../../Queries/table-keys';
 import { useAuthProperties } from '../../Hooks/useAuthProperties';
 import { isArrayGuard, isStringGuard } from '../../util/guards';
+import { LogLevel } from '../../../types/types';
+
+const levelsArray = Object.keys(LogLevel).map((p) => ({
+  value: p,
+  label: p,
+}));
 
 const Search = () => {
   const { authProps } = useAuthProperties();
@@ -57,32 +63,7 @@ const Search = () => {
         <Grid.Col xs={6} sm={4} md={3} lg={3} orderSm={2} orderMd={4}>
           <Select
             label="Level"
-            data={[
-              {
-                value: 'Verbose',
-                label: 'Verbose',
-              },
-              {
-                value: 'Debug',
-                label: 'Debug',
-              },
-              {
-                value: 'Information',
-                label: 'Information',
-              },
-              {
-                value: 'Warning',
-                label: 'Warning',
-              },
-              {
-                value: 'Error',
-                label: 'Error',
-              },
-              {
-                value: 'Fatal',
-                label: 'Fatal',
-              },
-            ]}
+            data={levelsArray}
             {...form.getInputProps('level')}
           ></Select>
         </Grid.Col>{' '}

@@ -1,13 +1,19 @@
-import { Loader, Table } from '@mantine/core';
+import { Loader, Table, useMantineTheme } from '@mantine/core';
 import useQueryLogsHook from '../../Hooks/useQueryLogsHook';
-import { getBgLogLevel } from '../../util';
+import { getBgLogLevel, printDate } from '../../util/prettyPrints';
 import { LogLevel } from '../../../types/types';
 import DetailsModal from './DetailsModal';
-import { isObjectGuard, isStringGuard } from '../../util/guards';
-import { printDate } from '../../util/prettyPrints';
+import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
+import { useMemo } from 'react';
 
 const SerilogResults = () => {
   const { data, isFetching } = useQueryLogsHook();
+  const theme = useMantineTheme();
+
+  const getCellColor = useMemo(
+    () => (logLevel: string) => getBgLogLevel(theme, LogLevel[logLevel]),
+    [theme],
+  );
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -19,34 +25,50 @@ const SerilogResults = () => {
             <th>Date</th>
             <th>Message</th>
             <th>Exception</th>
-            <th>Property type</th>
             <th>Properties</th>
           </tr>
         </thead>
         <tbody>
           {!isFetching &&
-            data?.logs &&
-            // TODO
-            // isObjectGuard(data) &&
+            isObjectGuard(data) &&
+            isArrayGuard(data.logs) &&
             data.logs.map((log) => (
               // TODO: all styles and modals
               <tr key={log.rowNo} className={log.level}>
                 <td>{log.rowNo}</td>
-                <td className={getBgLogLevel(LogLevel[log.level])}>{log.level}</td>
+                <td style={{ backgroundColor: getCellColor(log.level) }}>
+                  {log.level} TODO Color
+                </td>
                 <td>{printDate(log.timestamp)}</td>
                 <td>{log.message}</td>
                 <td>
                   {isStringGuard(log.exception) ? (
-                    <DetailsModal modalContent={log.exception} />
+                    <DetailsModal
+                      modalContent={log.exception}
+                      modalTitle="Exception details"
+                      contentType={log.propertyType}
+                    />
                   ) : null}
                 </td>
-                <td>{log.propertyType}</td>
-                <td>{false ? log.properties : ''}</td>
+                <td>
+                  {isStringGuard(log.properties) ? (
+                    <DetailsModal
+                      modalContent={log.properties}
+                      modalTitle="Properties details"
+                      contentType="json"
+                    />
+                  ) : null}
+                </td>
               </tr>
             ))}
         </tbody>
       </Table>
-      {isFetching && <Loader variant="bars" />}
+      {isFetching && (
+        <Loader
+          // TODO replace with logs skeleton
+          variant="dots"
+        />
+      )}
     </div>
   );
 };

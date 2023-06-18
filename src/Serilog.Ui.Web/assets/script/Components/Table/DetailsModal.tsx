@@ -1,10 +1,32 @@
 import { Button, Group, Modal, useMantineTheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Prism } from '@mantine/prism';
+import { Prism as PrismComponent } from '@mantine/prism';
+import { printXmlCode } from '../../util/prettyPrints';
+import { useMemo } from 'react';
 
-const DetailsModal = ({ modalContent }: { modalContent: string }) => {
+const DetailsModal = ({
+  modalContent,
+  modalTitle,
+  contentType,
+}: {
+  modalContent: string;
+  modalTitle: string;
+  contentType: string;
+}) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
+
+  const renderContent = useMemo(() => {
+    if (contentType === 'xml') return printXmlCode(contentType);
+    if (contentType === 'json') {
+      try {
+        return JSON.stringify(JSON.parse(modalContent), null, 2) ?? '{}';
+      } catch {
+        console.warn(`${modalContent} is not a valid json!`);
+      }
+    }
+    return '{}';
+  }, [contentType, modalContent]);
 
   return (
     <>
@@ -14,7 +36,7 @@ const DetailsModal = ({ modalContent }: { modalContent: string }) => {
         centered
         radius="sm"
         size="xl"
-        title="???"
+        title={modalTitle}
         overlayProps={{
           color:
             theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
@@ -22,10 +44,15 @@ const DetailsModal = ({ modalContent }: { modalContent: string }) => {
           blur: 3,
         }}
       >
-        <Prism withLineNumbers trim={false} language="json">
-          {/* // TODO Catch exception, pass directly json/xml from upper comp */}
-          {JSON.stringify(JSON.parse(modalContent), null, 2)}
-        </Prism>
+        <PrismComponent
+          withLineNumbers
+          trim={false}
+          language={
+            contentType === 'xml' ? 'markup' : contentType === 'json' ? 'json' : 'bash'
+          }
+        >
+          {renderContent}
+        </PrismComponent>
       </Modal>
 
       <Group position="center">
