@@ -20,7 +20,7 @@ partial class Build
 
     Target Backend_Test => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
-        // .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
+        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
         .Description("Runs dotnet test")
         .Executes(() =>
         {
@@ -31,7 +31,7 @@ partial class Build
 
     Target Backend_Test_Ci => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
-        // .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
+        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
         .Description("Runs dotnet-coverage collect, with coverlet coverage")
         .Executes(() =>
         {
@@ -41,7 +41,7 @@ partial class Build
 
     Target Backend_Report_Ci => targetDefinition => targetDefinition
         .DependsOn(Backend_Test_Ci)
-        // .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
+        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
         .Description("Runs report-generator Sonarqube reports")
         .Executes(() =>
         {
