@@ -37,7 +37,7 @@ partial class Build
         {
             // encoded spaces [ref](https://github.com/microsoft/azure-pipelines-tasks/issues/18731#issuecomment-1689118779)
             DotnetCoverage?.Invoke(
-                "collect -f xml -o coverage.xml dotnet test --configuration=Release --no-build --collect='XPlat%20Code%20Coverage;Format=cobertura' --logger=trx;LogFileName=test-results.trx");
+                "collect -f xml -o coverage.xml dotnet test --configuration=Release --no-build --collect=XPlat%20Code%20Coverage;Format=cobertura --logger=trx;LogFileName=test-results.trx");
         });
 
     Target Backend_Report_Ci => targetDefinition => targetDefinition
