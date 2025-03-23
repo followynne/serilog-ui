@@ -12,25 +12,25 @@ using Nuke.Common.Utilities;
 class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params GitHubActionsImage[] images)
     : GitHubActionsAttribute(name, image, images)
 {
-    public GithubAction[] AddGithubActions { get; set; } = Array.Empty<GithubAction>();
+    public GithubAction[] AddGithubActions { get; set; } = [];
 
     public enum GithubAction
     {
         Frontend_SonarScan_Task,
-
         Frontend_Reporter,
-
         Frontend_Artifact,
-
         Backend_Reporter,
-
         Backend_Artifact,
     }
 
     protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
     {
         var job = base.GetJobs(image, relevantTargets);
-        var newSteps = new List<GitHubActionsStep>(new GitHubActionsStep[] { new GitHubActionSetupJava17() }.Concat(job.Steps));
+        GitHubActionsStep[] setupSteps = [new GitHubActionSetupDotnet("6.0.x"),
+            new GitHubActionSetupDotnet("8.0.x"),
+            new GitHubActionSetupJava17(),
+            ..job.Steps];
+        var newSteps = new List<GitHubActionsStep>(setupSteps);
 
         foreach (var act in AddGithubActions)
         {
@@ -54,7 +54,7 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
             }
         }
 
-        job.Steps = newSteps.ToArray();
+        job.Steps = [.. newSteps];
         return job;
     }
 }
@@ -78,6 +78,26 @@ class GitHubActionSetupJava17 : GitHubActionsStep
             {
                 writer.WriteLine($"distribution: 'temurin'");
                 writer.WriteLine($"java-version: '17'");
+            }
+        }
+    }
+}
+
+class GitHubActionSetupDotnet(string dotnetV) : GitHubActionsStep
+{
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine($"- uses: actions/setup-dotnet {dotnetV}");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("with:");
+
+            using (writer.Indent())
+            {
+                writer.WriteLine($"dotnet-version: '{dotnetV}'");
             }
         }
     }
