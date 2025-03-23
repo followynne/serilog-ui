@@ -89,7 +89,7 @@ class GitHubActionSetupDotnet(string dotnetV) : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine($"- uses: actions/setup-dotnet {dotnetV}");
+        writer.WriteLine("- uses: actions/setup-dotnet@v4");
 
         using (writer.Indent())
         {
