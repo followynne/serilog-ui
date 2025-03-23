@@ -87,12 +87,18 @@ partial class Build
 
     Target Backend_SonarScan_Start => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
-        )
+        // .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
+        //                       !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+        //                       !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+        // )
         .Executes(() =>
         {
+            var condition = OnGithubActionRun && !IsPr &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey);
+
+            if (!condition) return;
+
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
                 .SetToken(SonarToken)
@@ -116,12 +122,16 @@ partial class Build
 
     Target Backend_SonarScan_End => targetDefinition => targetDefinition
         .DependsOn(Backend_Report_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
-        )
+        // .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
+        //                       !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+        //                       !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+        // )
         .Executes(() =>
         {
+            var condition = OnGithubActionRun && !IsPr &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey);
+            if (!condition) return;
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
                 .SetToken(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
