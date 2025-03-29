@@ -1,3 +1,4 @@
+using System;
 using Nuke.Common;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Docker;
@@ -35,8 +36,10 @@ partial class Build
         .Description("Runs dotnet-coverage collect, with coverlet coverage")
         .Executes(() =>
         {
+            var user = Environment.GetEnvironmentVariable("USER") ?? Environment.GetEnvironmentVariable("USERNAME");
+
             ProcessTasks
-                .StartProcess("sudo", "chown -R $USER:$USER /home/runneradmin")
+                .StartProcess("sudo", $"chown -R {user}:{user} /home/runneradmin")
                 .AssertZeroExitCode();
             // encoded spaces [ref](https://github.com/microsoft/azure-pipelines-tasks/issues/18731#issuecomment-1689118779)
             DotnetCoverage?.Invoke(
