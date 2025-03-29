@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.CI.GitHubActions.Configuration;
@@ -26,10 +25,9 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
     protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
     {
         var job = base.GetJobs(image, relevantTargets);
-        GitHubActionsStep[] setupSteps = [new GitHubActionSetupDotnet("6.0.x"),
-            new GitHubActionSetupDotnet("8.0.x"),
-            new GitHubActionSetupJava17(),
-            ..job.Steps];
+        GitHubActionsStep[] backendSteps = AddGithubActions.Any(act => act == GithubAction.Backend_Artifact) ?
+            [new GitHubActionSetupDotnet("6.0.x"), new GitHubActionSetupDotnet("8.0.x"),] : [];
+        GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupJava17(), .. job.Steps];
         var newSteps = new List<GitHubActionsStep>(setupSteps);
 
         foreach (var act in AddGithubActions)

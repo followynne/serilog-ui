@@ -38,6 +38,7 @@ partial class Build
         {
             var user = Environment.GetEnvironmentVariable("USER") ?? Environment.GetEnvironmentVariable("USERNAME");
 
+            // due to [ref](https://github.com/Mongo2Go/Mongo2Go/issues/144)
             ProcessTasks
                 .StartProcess("sudo", $"chown -R {user}:{user} /home/runneradmin")
                 .AssertZeroExitCode();
